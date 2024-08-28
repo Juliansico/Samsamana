@@ -1,9 +1,9 @@
-
 {% block content %}
-<h2>Recuperar contraseña</h2>
+<h2>Recuperar Contraseña</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Enviar</button>
+    <button type="submit">Enviar correo de recuperación</button>
 </form>
+
 {% endblock %}

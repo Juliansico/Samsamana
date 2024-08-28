@@ -1,5 +1,5 @@
 :root {
-    --background: #0345fa;
+    --background: #1378c5;
     --navbar-width: 256px;
     --navbar-width-min: 80px;
     --navbar-dark-primary: #18283b;
@@ -66,6 +66,7 @@
     color: var(--navbar-light-primary);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     overflow: hidden;
+    -webkit-user-select: none;
     user-select: none;
   }
   #nav-bar hr {
@@ -160,7 +161,7 @@
   }
   #nav-content::-webkit-scrollbar-thumb {
     border-radius: 99px;
-    background-color: #D62929;
+    background-color: #d1d1d1;
   }
   
   #nav-content-highlight {

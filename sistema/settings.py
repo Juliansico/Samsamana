@@ -23,6 +23,8 @@ AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_ROOT = os.path.join(BASE_DIR, '')
+MEDIA_URL = '/img/'
 
 
 # Quick-start development settings - unsuitable for production
@@ -104,9 +106,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'inventario',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
-        'PORT': '3306'
+        'PORT': '3308'
     }
 }
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -162,5 +164,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'braya2003h@gmail.com'
-EMAIL_HOST_PASSWORD = 'jfrz ncls ladc hmzl'
+EMAIL_HOST_USER = 'samsamanarecuperar@gmail.com'
+EMAIL_HOST_PASSWORD = 'h m h k c r y z z p n q s f c n '
+
+AUTH_USER_MODEL = 'gestionar_usuarios.Usuario'

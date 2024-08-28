@@ -17,7 +17,7 @@ body {
     display: flex;
     width: 90%;
     max-width: 1000px;
-    height: 600px;
+    height: 700px;
     background-color: rgb(255, 255, 255); /* Fondo con opacidad para ver el fondo detrás */
     border-radius: 20px;
     overflow: hidden;
@@ -26,9 +26,11 @@ body {
 
 /* Logo */
 .logo {
-    max-width: 200px; /* Aumenta el tamaño máximo del logo */
-    margin-bottom: 30px;
+    max-width: 400px; /* Aumenta el tamaño máximo del logo */
+    
     align-self: center;
+    margin-top: 10%;
+
 }
 
 /* Formulario */
@@ -83,7 +85,7 @@ input[type="password"]:focus {
     margin-top: 20px;
     padding: 15px;
     background-color: #333;
-    color: white;
+    color: rgb(255, 255, 255);
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -139,4 +141,41 @@ input[type="password"]:focus {
 ::placeholder {
     font-family: 'Roboto', sans-serif;
     color: #aaa;
+}
+
+/* login.css */
+.swal2-custom-popup {
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.swal2-custom-title {
+    color: #000000;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.swal2-custom-content {
+    color: #721c24;
+    font-size: 18px;
+}
+
+.swal2-custom-footer {
+    color: #721c24;
+    font-size: 14px;
+}
+
+.swal2-custom-confirm-button {
+    background-color: rgb(0, 0, 0);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+.error-message {
+    color: rgb(0, 0, 0);
+    margin-top: 5px;
+    list-style-type: disc;
+    padding-left: 20px;
 }

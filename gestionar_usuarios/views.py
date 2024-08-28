@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.models import Group
 from .models import Usuario
 from .forms import UsuarioForm
 
@@ -17,7 +18,6 @@ def gestionar_usuarios(request):
     if query:
         usuarios = Usuario.objects.filter(
             Q(usuario__icontains=query) |
-            Q(nombre__icontains=query) |
             Q(apellido__icontains=query) |
             Q(documento__icontains=query)
         )
@@ -36,15 +36,14 @@ def añadir_usuario(request):
     if request.method == 'POST':
         form = UsuarioForm(request.POST)
         if form.is_valid():
-            usuario = form.save(commit=False)
-            usuario.set_password(form.cleaned_data['password1'])
-            usuario.save()
+            usuario = form.save()
+            # Remove any admin-related permissions
+            usuario.user_permissions.clear()
             messages.success(request, 'Usuario añadido con éxito.')
             return redirect('gestionar_usuarios')
     else:
         form = UsuarioForm()
     return render(request, 'añadir_usuario.html', {'form': form})
-
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -56,7 +55,13 @@ def editar_usuario(request, usuario_id):
             usuario = form.save(commit=False)
             if form.cleaned_data['password1']:
                 usuario.set_password(form.cleaned_data['password1'])
+            usuario.is_superuser = False  # Asegúrate de que no sea superusuario
+            usuario.is_staff = True  # Si quieres que tenga acceso al admin
             usuario.save()
+            rol_usuario = form.cleaned_data.get('rol_usuario')
+            group = Group.objects.get(name=rol_usuario)
+            usuario.groups.clear()
+            usuario.groups.add(group)
             messages.success(request, 'Usuario actualizado con éxito.')
             return redirect('gestionar_usuarios')
     else:
@@ -75,8 +80,6 @@ def activar_inactivar_usuario(request, usuario_id):
     return redirect('gestionar_usuarios')
 
 
-
-
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def consultar_usuario(request):
@@ -88,4 +91,3 @@ def consultar_usuario(request):
         else:
             messages.error(request, 'Usuario no encontrado.')
     return render(request, 'consultar_usuario.html')
-

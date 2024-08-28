@@ -12,8 +12,8 @@ from django.utils.http import urlsafe_base64_decode
 import os
 import subprocess
 from datetime import datetime
-User = get_user_model()
 
+User = get_user_model()
 
 def dashboard(request):
     return render(request, 'dashboard.html')
@@ -22,11 +22,11 @@ def dashboard(request):
 def gestionar_respaldos(request):
     backup_dir = os.path.join(settings.BASE_DIR, 'backups')
     print(f"Ruta del directorio de respaldos: {backup_dir}")
-    
+
     # Crear el directorio si no existe
     if not os.path.exists(backup_dir):
         os.makedirs(backup_dir)
-    
+
     backups = []
     try:
         for filename in os.listdir(backup_dir):
@@ -42,16 +42,15 @@ def gestionar_respaldos(request):
                 })
     except FileNotFoundError:
         messages.error(request, "No se pudo encontrar el directorio de respaldos.")
-    
+
     backups.sort(key=lambda x: x['created_at'], reverse=True)
-    
+
     # Paginación
     paginator = Paginator(backups, 10)  # 10 respaldos por página
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
-    return render(request, 'gestionar_respaldos.html', {'page_obj': page_obj})
 
+    return render(request, 'gestionar_respaldos.html', {'page_obj': page_obj})
 
 # Vista para crear un respaldo de la base de datos
 class CrearRespaldoView(View):
@@ -130,10 +129,6 @@ class RestaurarRespaldoView(View):
                 # Ejecutar el comando y capturar la salida
                 result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
-                # Para depuración, imprime la salida del comando
-                print("Salida del comando:", result.stdout)
-                print("Error del comando:", result.stderr)
-
                 if result.returncode != 0:
                     messages.error(request, f"Error al restaurar la base de datos: {result.stderr}")
                 else:
@@ -147,7 +142,6 @@ class RestaurarRespaldoView(View):
             messages.error(request, "No se especificó un archivo para restaurar")
 
         return redirect('gestionar_respaldos')
-
 
 # Vista para descargar un respaldo
 def descargar_respaldo(request, respaldo_id):
@@ -163,11 +157,8 @@ def descargar_respaldo(request, respaldo_id):
 class EliminarRespaldoView(View):
     def post(self, request, *args, **kwargs):
         respaldo_id = request.POST.get('respaldo_id')
-        print(f"ID del respaldo recibido: {respaldo_id}")  # Depuración
-        
         if respaldo_id:
             file_path = os.path.join(settings.BASE_DIR, 'backups', respaldo_id)
-            print(f"Ruta del archivo: {file_path}")  # Depuración
             
             if os.path.exists(file_path):
                 try:

@@ -1,11 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import  Proveedor
+from .models import Proveedor
 from gestionar_usuarios.models import Usuario
-
-
-
-
 
 class BaseModelForm(forms.ModelForm):
     def clean_estado(self):
@@ -26,10 +22,8 @@ class BaseModelForm(forms.ModelForm):
             'style': 'width: 20px; height: 20px;'
         })
 
-        
 class UsuarioForm(UserCreationForm, BaseModelForm):
     ROL_CHOICES = [
-        ('administrador', 'Administrador'),
         ('empleado', 'Empleado'),
     ]
     
@@ -49,19 +43,16 @@ class UsuarioForm(UserCreationForm, BaseModelForm):
 
     class Meta:
         model = Usuario
-        fields = ['usuario', 'nombre', 'apellido', 'correo', 'tipo_documento', 'documento', 'telefono', 'rol_usuario', 'password1', 'password2', 'estado']
+        fields = ['username', 'apellido', 'tipo_documento', 'documento', 'telefono', 'email', 'estado']
         widgets = {
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-
-
-
-
-
-
-
-
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if Usuario.objects.filter(email=email).exists():
+            raise forms.ValidationError("El correo ya está registrado.")
+        return email
 
 class ProveedorForm(BaseModelForm):
     class Meta:
@@ -70,4 +61,3 @@ class ProveedorForm(BaseModelForm):
         widgets = {
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-

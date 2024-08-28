@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Restablecer Contraseña</title>
+</head>
 <body>
-    <p>Has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace para continuar:</p>
-    <p><a href="{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}">Restablecer contraseña</a></p>
-    <p>Si no has solicitado este cambio, puedes ignorar este correo.</p>
+    <p>Hola {{ user.username }},</p>
+
+    <p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p>
+    
+    <p><a href="{{ protocol }}://{{ domain }}{% url 'restablecer_contrasena' uidb64=uid token=token %}">Restablecer Contraseña</a></p>
+    
+    <p>Este enlace expirará en {{ expiration_days }} días.</p>
+    
+    <p>Saludos,<br>El equipo de {{ site_name }}</p>
 </body>
 </html>

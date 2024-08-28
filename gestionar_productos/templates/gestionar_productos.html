@@ -35,11 +35,11 @@
         <tr>
             <td>{{ producto.id }}</td>
             <td>{{ producto.nombre }}</td>
-            <td>{{ producto.Marca.nombreMarca }}</td>
-            <td>{{ producto.Categoria.nombre }}</td>
+            <td>{{ producto.marca.nombre }}</td>
+            <td>{{ producto.categoria.nombre }}</td>
             <td>{{ producto.precio }}</td>
-            <td>{{ producto.Presentacion.nombre }}</td>
-            <td>{{ producto.unidad_De_Medida }}</td>
+            <td>{{ producto.presentacion.nombre }}</td>
+            <td>{{ producto.unidad_de_medida }}</td>
             <td>{% if producto.estado %}Activo{% else %}Inactivo{% endif %}</td>
             <td>
                 <a href="{% url 'editar_producto' producto.id %}" class="btn btn-sm btn-primary">Editar</a>
