@@ -68,6 +68,8 @@ def añadir_venta(request):
 def activar_desactivar_venta(request, venta_id):
     venta = get_object_or_404(Venta, id=venta_id, id_Usuario=request.user)
     venta.estado = not venta.estado
+    estado = "activada" if venta.estado else "inactivada" 
+    messages.success(request, f'Venta {estado} con éxito.')
     venta.save()
     return redirect('gestionar_ventas')
 

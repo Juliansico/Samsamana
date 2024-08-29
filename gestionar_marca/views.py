@@ -3,8 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Marca
 from .forms import MarcaForm
+
 def dashboard(request): 
     return render(request, 'dashboard.html')
+
 @login_required
 def editar_marca(request, marca_id):
     # Buscar la marca usando filter y first en lugar de get_object_or_404

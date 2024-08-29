@@ -49,9 +49,9 @@ def editar_compra(request, compra_id):
 @login_required
 def activar_inactivar_compra(request, compra_id):
     compra = get_object_or_404(Compra, id=compra_id)
-    compra.estadoCompra = 'Inactiva' if compra.estadoCompra == 'Activa' else 'Activa'
+    compra.estado = not compra.estado
     compra.save()
-    messages.success(request, f'Compra {compra.estadoCompra.lower()} con éxito.')
+    messages.success(request, f'Compra {compra.estado} con éxito.')
     return redirect('gestionar_compra')
 
 
