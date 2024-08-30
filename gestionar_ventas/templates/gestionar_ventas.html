@@ -36,8 +36,8 @@
             <td>{{ venta.nombre_Producto }}</td>
             <td>{{ venta.precio_Producto }}</td>
             <td>{{ venta.cantidad_Venta }}</td>
-            <td>{{ venta.total_Venta_Realizada }}</td>
-            <td>{{ venta.fecha_Apertura }}</td>
+            <td>{{ venta.total_Venta }}</td>
+            <td>{{ venta.fecha }}</td>
             <td>{{ venta.estado|yesno:"Activo,Inactivo" }}</td>
             <td>
                 <a href="{% url 'editar_venta' venta.id %}" class="btn btn-sm btn-primary">Editar</a>

@@ -2,11 +2,50 @@
 
 {% block content %}
 <h2>Añadir Venta</h2>
-
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+    <p>
+        <label for="id_precio_producto">Precio Producto:</label>
+        <input type="number" id="id_precio_producto" readonly class="form-control">
+    </p>
+    <p>
+        <label for="id_total_venta">Total Venta:</label>
+        <input type="number" id="id_total_venta" readonly class="form-control">
+    </p>
     <button type="submit" class="btn btn-primary">Guardar</button>
-    <a href="{% url 'gestionar_ventas' %}" class="btn btn-secondary">Cancelar</a>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productoSelect = document.getElementById('id_producto');
+    const cantidadInput = document.getElementById('id_cantidad_Venta');
+    const precioInput = document.getElementById('id_precio_producto');
+    const totalInput = document.getElementById('id_total_venta');
+
+    function actualizarPrecioYTotal() {
+        const productoId = productoSelect.value;
+        const cantidad = parseFloat(cantidadInput.value) || 0;
+
+        if (productoId) {
+            fetch(`/api/producto/${productoId}/precio/`)
+                .then(response => response.json())
+                .then(data => {
+                    const precio = parseFloat(data.precio);
+                    precioInput.value = precio.toFixed(2);
+                    totalInput.value = (precio * cantidad).toFixed(2);
+                });
+        } else {
+            precioInput.value = '';
+            totalInput.value = '';
+        }
+    }
+
+    productoSelect.addEventListener('change', actualizarPrecioYTotal);
+    cantidadInput.addEventListener('input', actualizarPrecioYTotal);
+
+    // Actualizar al cargar la página
+    actualizarPrecioYTotal();
+});
+</script>
 {% endblock %}

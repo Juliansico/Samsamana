@@ -24,7 +24,7 @@ class BaseModelForm(forms.ModelForm):
 class CompraForm(BaseModelForm):
     class Meta:
         model = Compra
-        fields = ['fecha_Compra', 'total_Compra', 'cantidad_Producto', 'proveedor_Id', 'productos', 'estado']
+        fields = ['fecha_Compra', 'cantidad_Producto', 'proveedor_Id', 'productos', 'total_Compra', 'estado']
         widgets = {
             'fecha_Compra': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

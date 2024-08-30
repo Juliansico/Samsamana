@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 
 from django.contrib import messages
-from .models import Venta
+from .models import Venta, Producto
 from .forms import VentaForm
 
 @login_required
@@ -50,13 +50,11 @@ def consultar_venta(request):
 
 @login_required
 def añadir_venta(request):
-    Usuario = get_user_model()
     if request.method == 'POST':
         form = VentaForm(request.POST)
         if form.is_valid():
             venta = form.save(commit=False)
-            venta.id_Usuario = Usuario.objects.get(id=request.user.id)
-            venta.total_Venta_Realizada = venta.precio_Producto * venta.cantidad_Venta
+            venta.id_Usuario = request.user
             venta.save()
             messages.success(request, 'Venta añadida con éxito.')
             return redirect('gestionar_ventas')
@@ -73,4 +71,10 @@ def activar_desactivar_venta(request, venta_id):
     venta.save()
     return redirect('gestionar_ventas')
 
+
+from django.http import JsonResponse
+
+def obtener_precio_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    return JsonResponse({'precio': producto.precio})
 

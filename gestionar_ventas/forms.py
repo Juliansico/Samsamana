@@ -24,11 +24,13 @@ class BaseModelForm(forms.ModelForm):
             'style': 'width: 20px; height: 20px;'
         })
 
-class VentaForm(BaseModelForm):
+class VentaForm(forms.ModelForm):
     class Meta:
         model = Venta
-        fields = ['nombre_Producto', 'precio_Producto', 'cantidad_Venta', 'fecha_Apertura', 'estado']
+        fields = ['producto', 'cantidad_Venta', 'fecha', 'estado']
         widgets = {
-            'fecha_Apertura': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'producto': forms.Select(attrs={'class': 'form-control'}),
+            'cantidad_Venta': forms.NumberInput(attrs={'class': 'form-control'}),
+            'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

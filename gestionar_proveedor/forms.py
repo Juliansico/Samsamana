@@ -57,7 +57,7 @@ class UsuarioForm(UserCreationForm, BaseModelForm):
 class ProveedorForm(BaseModelForm):
     class Meta:
         model = Proveedor
-        fields = ['nombre', 'direccion', 'telefono', 'email', 'producto', 'estado']
+        fields = ['nombre', 'direccion', 'telefono', 'email', 'estado']
         widgets = {
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

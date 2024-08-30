@@ -13,5 +13,5 @@ urlpatterns = [
     path('ventas/consultar/', views.consultar_venta, name='consultar_venta'),
     path('ventas/activar-desactivar/<int:venta_id>/', views.activar_desactivar_venta, name='activar_desactivar_venta'),
     path('ventas/editar/<int:venta_id>/', views.editar_venta, name='editar_venta'),
-    
+    path('api/producto/<int:producto_id>/precio/', views.obtener_precio_producto, name='obtener_precio_producto'),
 ]
