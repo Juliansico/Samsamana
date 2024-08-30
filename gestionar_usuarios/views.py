@@ -82,12 +82,24 @@ def activar_inactivar_usuario(request, usuario_id):
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
-def consultar_usuario(request):
-    if request.method == 'POST':
-        documento = request.POST.get('documento')
-        usuario = Usuario.objects.filter(documento=documento).first()
-        if usuario:
-            return render(request, 'consultar_usuario.html', {'usuario': usuario})
-        else:
-            messages.error(request, 'Usuario no encontrado.')
-    return render(request, 'consultar_usuario.html')
+def filtrar_usuarios(request):
+    usuarios = Usuario.objects.all()
+
+    nombre = request.GET.get('nombre')
+    documento = request.GET.get('documento')
+    telefono = request.GET.get('telefono')
+    estado = request.GET.get('estado')
+
+    if nombre:
+        usuarios = usuarios.filter(username__icontains=nombre)
+    if documento:
+        usuarios = usuarios.filter(documento__icontains=documento)
+    if telefono:
+        usuarios = usuarios.filter(telefono__icontains=telefono)
+    if estado:
+        if estado == 'activado':
+            usuarios = usuarios.filter(estado=True)
+        elif estado == 'inactivado':
+            usuarios = usuarios.filter(estado=False)
+
+    return render(request, 'gestionar_usuarios.html', {'usuarios': usuarios})

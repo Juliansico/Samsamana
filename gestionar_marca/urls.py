@@ -11,6 +11,5 @@ urlpatterns = [
     path('marca/añadir/', views.añadir_marca, name='añadir_marca'),
     path('marca/editar/<int:marca_id>/', views.editar_marca, name='editar_marca'),
     path('marca/activar-inactivar/<int:marca_id>/', views.activar_inactivar_marca, name='activar_inactivar_marca'),
-    path('marca/consultar/', views.consultar_marca, name='consultar_marca'),
-    
+    path('marcas/', views.filtrar_marcas, name='filtrar_marcas'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

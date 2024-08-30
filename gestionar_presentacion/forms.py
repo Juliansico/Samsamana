@@ -27,7 +27,7 @@ class BaseModelForm(forms.ModelForm):
 class PresentacionForm(BaseModelForm):
     class Meta:
         model = Presentacion
-        fields = ['nombre', 'precio_venta', 'precio_compra', 'cantidad_Stock', 'unidades_Paquete', 'estado']
+        fields = ['nombre', 'estado']
         widgets = {
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

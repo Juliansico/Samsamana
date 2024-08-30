@@ -63,20 +63,25 @@ def activar_inactivar_presentacion(request, presentacion_id):
 
 
 @login_required
-def consultar_presentacion(request):
-    if request.method == 'POST':
-        id_presentacion = request.POST.get('id_presentacion')
-        nombre = request.POST.get('nombre')
-        presentacion = None
-        if id_presentacion:
-            presentacion = Presentacion.objects.filter(id=id_presentacion).first()
-        elif nombre:
-            presentacion = Presentacion.objects.filter(nombre__icontains=nombre).first()
-        if presentacion:
-            return render(request, 'consultar_presentacion.html', {'presentacion': presentacion})
-        else:
-            messages.error(request, 'Presentación no encontrada.')
-    return render(request, 'consultar_presentacion.html')
+def filtrar_presentaciones(request):
+    estado_filtro = request.GET.get('estado', None)
+    buscar = request.GET.get('buscar', '')
+
+    presentaciones = Presentacion.objects.all()
+
+    if estado_filtro == 'activado':
+        presentaciones = presentaciones.filter(estado=True)
+    elif estado_filtro == 'inactivado':
+        presentaciones = presentaciones.filter(estado=False)
+
+    if buscar:
+        presentaciones = presentaciones.filter(nombre__icontains=buscar)
+
+    context = {
+        'presentaciones': presentaciones,
+    }
+
+    return render(request, 'gestionar_presentacion.html', context)
 
 
 

@@ -5,16 +5,31 @@
 
 <a href="{% url 'añadir_usuario' %}" class="btn btn-primary mb-3">Añadir Usuario</a>
 
-<div class="mb-3">
-    <h3>Consultar Usuario</h3>
-    <form method="post" action="{% url 'consultar_usuario' %}">
-        {% csrf_token %}
-        <div class="input-group">
-            <input type="text" name="documento" class="form-control" placeholder="Número de documento">
-            <button type="submit" class="btn btn-secondary">Buscar</button>
+<form method="get" action="{% url 'filtrar_usuarios' %}">
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <input type="text" class="form-control" placeholder="Buscar por nombre..." name="nombre" value="{{ request.GET.nombre }}">
         </div>
-    </form>
-</div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" placeholder="Buscar por documento..." name="documento" value="{{ request.GET.documento }}">
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" placeholder="Buscar por teléfono..." name="telefono" value="{{ request.GET.telefono }}">
+        </div>
+        <div class="col-md-3">
+            <select id="estado" name="estado" class="form-control">
+                <option value="">Filtrar estado (Todos)</option>
+                <option value="activado" {% if request.GET.estado == "activado" %}selected{% endif %}>Activado</option>
+                <option value="inactivado" {% if request.GET.estado == "inactivado" %}selected{% endif %}>Inactivado</option>
+            </select>
+        </div>
+        <div class="col-md-12 mt-3">
+            <button type="submit" class="btn btn-outline-info">Buscar</button>
+        </div>
+    </div>
+</form>
+
+
 
 <table class="table">
     <thead>

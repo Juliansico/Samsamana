@@ -53,32 +53,28 @@ def activar_inactivar_proveedor(request, proveedor_id):
 
 
 @login_required
-def consultar_proveedor(request):
-    if request.method == 'POST':
-        id_proveedor = request.POST.get('id_proveedor')
-        nombre = request.POST.get('nombre')
-        producto = request.POST.get('producto')
-        telefono = request.POST.get('telefono')
-        email = request.POST.get('email')
-        direccion = request.POST.get('direccion')
-        
-        proveedor = None
-        if id_proveedor:
-            proveedor = Proveedor.objects.filter(id=id_proveedor).first()
-        elif nombre:
-            proveedor = Proveedor.objects.filter(nombre__icontains=nombre).first()
-        elif producto:
-            proveedor = Proveedor.objects.filter(producto__icontains=producto).first()
-        elif telefono:
-            proveedor = Proveedor.objects.filter(telefono__icontains=telefono).first()
-        elif email:
-            proveedor = Proveedor.objects.filter(email__icontains=email).first()
-        elif direccion:
-            proveedor = Proveedor.objects.filter(direccion__icontains=direccion).first()
-        
-        if proveedor:
-            return render(request, 'consultar_proveedor.html', {'proveedor': proveedor})
-        else:
-            messages.error(request, 'Proveedor no encontrado.')
-    return render(request, 'consultar_proveedor.html')
+def filtrar_proveedores(request):
+    nombre_filtro = request.GET.get('nombre', '')
+    estado_filtro = request.GET.get('estado', None)
+    telefono_filtro = request.GET.get('telefono', '')
+    email_filtro = request.GET.get('email', '')
+
+    proveedores = Proveedor.objects.all()
+
+    if nombre_filtro:
+        proveedores = proveedores.filter(nombre__icontains=nombre_filtro)
+    if estado_filtro == 'activado':
+        proveedores = proveedores.filter(estado=True)
+    elif estado_filtro == 'inactivado':
+        proveedores = proveedores.filter(estado=False)
+    if telefono_filtro:
+        proveedores = proveedores.filter(telefono__icontains=telefono_filtro)
+    if email_filtro:
+        proveedores = proveedores.filter(email__icontains=email_filtro)
+
+    context = {
+        'proveedores': proveedores,
+    }
+
+    return render(request, 'gestionar_proveedor.html', context)
 

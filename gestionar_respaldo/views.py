@@ -12,6 +12,7 @@ from django.utils.http import urlsafe_base64_decode
 import os
 import subprocess
 from datetime import datetime
+from .models import Respaldo
 
 User = get_user_model()
 
@@ -172,3 +173,19 @@ class EliminarRespaldoView(View):
             messages.error(request, "No se especificó un archivo para eliminar")
 
         return redirect('gestionar_respaldos')
+
+def filtrar_respaldos(request):
+    respaldos = Respaldo.objects.all()
+
+    nombre_archivo = request.GET.get('nombre_archivo')
+    fecha_creacion = request.GET.get('fecha_creacion')
+    tamano = request.GET.get('tamano')
+
+    if nombre_archivo:
+        respaldos = respaldos.filter(nombre_archivo__icontains=nombre_archivo)
+    if fecha_creacion:
+        respaldos = respaldos.filter(fecha_creacion__date=fecha_creacion)
+    if tamano:
+        respaldos = respaldos.filter(tamano__icontains=tamano)
+
+    return render(request, 'gestionar_respaldos.html', {'respaldos': respaldos})
