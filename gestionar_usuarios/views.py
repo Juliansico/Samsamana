@@ -6,11 +6,14 @@ from django.contrib import messages
 from django.contrib.auth.models import Group
 from .models import Usuario
 from .forms import UsuarioForm
+from django.views.decorators.cache import never_cache
 
+
+@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
 
-
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def gestionar_usuarios(request):
@@ -29,7 +32,7 @@ def gestionar_usuarios(request):
     }
     return render(request, 'gestionar_usuarios.html', context)
 
-
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def añadir_usuario(request):
@@ -44,7 +47,7 @@ def añadir_usuario(request):
     else:
         form = UsuarioForm()
     return render(request, 'añadir_usuario.html', {'form': form})
-
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def editar_usuario(request, usuario_id):
@@ -68,7 +71,7 @@ def editar_usuario(request, usuario_id):
         form = UsuarioForm(instance=usuario)
     return render(request, 'editar_usuario.html', {'form': form, 'usuario': usuario})
 
-
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def activar_inactivar_usuario(request, usuario_id):
@@ -79,7 +82,7 @@ def activar_inactivar_usuario(request, usuario_id):
     messages.success(request, f'Usuario {estado} con éxito.')
     return redirect('gestionar_usuarios')
 
-
+@never_cache
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def filtrar_usuarios(request):

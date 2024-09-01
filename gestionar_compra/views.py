@@ -4,19 +4,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import  Compra
 from .forms import  CompraForm
+from django.views.decorators.cache import never_cache
 
 # Create your views here.
-
+@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
-
+@never_cache
 @login_required
 def gestionar_compra(request):
     compras = Compra.objects.all()
     return render(request, 'gestionar_compra.html', {'compras': compras})
 
 
-
+@never_cache
 @login_required
 def añadir_compra(request):
     if request.method == 'POST':
@@ -29,7 +30,7 @@ def añadir_compra(request):
         form = CompraForm()
     return render(request, 'añadir_compra.html', {'form': form})
 
-
+@never_cache
 
 @login_required
 def editar_compra(request, compra_id):
@@ -55,7 +56,7 @@ def activar_inactivar_compra(request, compra_id):
     return redirect('gestionar_compra')
 
 
-
+@never_cache
 @login_required
 def consultar_compra(request):
     if request.method == 'POST':

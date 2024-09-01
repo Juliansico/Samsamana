@@ -3,15 +3,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Proveedor
 from .forms import ProveedorForm
+from django.views.decorators.cache import never_cache
 
+
+@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
-
+@never_cache
 @login_required
 def gestionar_proveedor(request):
     proveedores = Proveedor.objects.all()
     return render(request, 'gestionar_proveedor.html', {'proveedores': proveedores})
-
+@never_cache
 @login_required
 def añadir_proveedor(request):
     if request.method == 'POST':
@@ -25,7 +28,7 @@ def añadir_proveedor(request):
     return render(request, 'añadir_proveedor.html', {'form': form})
 
 
-
+@never_cache
 @login_required
 def editar_proveedor(request, proveedor_id):
     proveedor = get_object_or_404(Proveedor, id=proveedor_id)
@@ -51,7 +54,7 @@ def activar_inactivar_proveedor(request, proveedor_id):
     return redirect('gestionar_proveedor')
 
 
-
+@never_cache
 @login_required
 def filtrar_proveedores(request):
     nombre_filtro = request.GET.get('nombre', '')

@@ -16,6 +16,7 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 AUTH_USER_MODEL = 'gestionar_usuarios.Usuario'
@@ -65,16 +66,15 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+    'django.middleware.cache.UpdateCacheMiddleware',  # Mover al final
+    'django.middleware.cache.FetchFromCacheMiddleware',  # Mantener al final
 ]
 
 ROOT_URLCONF = 'sistema.urls'
@@ -108,7 +108,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '3307'
+        'PORT': '3306'
     }
 }
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

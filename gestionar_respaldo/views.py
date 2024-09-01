@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
@@ -16,10 +18,14 @@ from .models import Respaldo
 
 User = get_user_model()
 
+
+@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
 
+
 # Vista para listar los respaldos
+@never_cache
 def gestionar_respaldos(request):
     backup_dir = os.path.join(settings.BASE_DIR, 'backups')
     print(f"Ruta del directorio de respaldos: {backup_dir}")
@@ -54,6 +60,7 @@ def gestionar_respaldos(request):
     return render(request, 'gestionar_respaldos.html', {'page_obj': page_obj})
 
 # Vista para crear un respaldo de la base de datos
+@method_decorator(never_cache, name='post')
 class CrearRespaldoView(View):
     def post(self, request, *args, **kwargs):
         try:
@@ -94,6 +101,7 @@ class CrearRespaldoView(View):
         return redirect('gestionar_respaldos')
 
 # Vista para restaurar la base de datos
+@method_decorator(never_cache, name='post')
 class RestaurarRespaldoView(View):
     def post(self, request, *args, **kwargs):
         # Obtener el nombre del archivo desde el campo oculto
@@ -145,6 +153,7 @@ class RestaurarRespaldoView(View):
         return redirect('gestionar_respaldos')
 
 # Vista para descargar un respaldo
+@never_cache
 def descargar_respaldo(request, respaldo_id):
     file_path = os.path.join(settings.BASE_DIR, 'backups', respaldo_id)
     if os.path.exists(file_path):
@@ -155,6 +164,7 @@ def descargar_respaldo(request, respaldo_id):
     raise Http404
 
 # Vista para eliminar un respaldo
+@method_decorator(never_cache, name='post')
 class EliminarRespaldoView(View):
     def post(self, request, *args, **kwargs):
         respaldo_id = request.POST.get('respaldo_id')
@@ -174,6 +184,8 @@ class EliminarRespaldoView(View):
 
         return redirect('gestionar_respaldos')
 
+
+@never_cache
 def filtrar_respaldos(request):
     respaldos = Respaldo.objects.all()
 

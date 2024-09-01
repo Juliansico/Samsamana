@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required 
 from django.contrib import messages
 from .models import Marca
 from .forms import MarcaForm
+from django.views.decorators.cache import never_cache
 
+@never_cache
 def dashboard(request): 
     return render(request, 'dashboard.html')
-
+@never_cache
 @login_required
 def editar_marca(request, marca_id):
     # Buscar la marca usando filter y first en lugar de get_object_or_404
@@ -27,7 +29,7 @@ def editar_marca(request, marca_id):
         form = MarcaForm(instance=marca)
     
     return render(request, 'editar_marca.html', {'form': form, 'marca': marca})
-
+@never_cache
 @login_required
 def activar_inactivar_marca(request, marca_id):
     # Buscar la marca usando filter y first en lugar de get_object_or_404
@@ -44,7 +46,7 @@ def activar_inactivar_marca(request, marca_id):
     estado = "activada" if marca.estado else "inactivada"
     messages.success(request, f'Marca {estado} con éxito.')
     return redirect('gestionar_marca')
-
+@never_cache
 @login_required
 def filtrar_marcas(request):
     nombre_filtro = request.GET.get('buscar', '')
@@ -65,12 +67,12 @@ def filtrar_marcas(request):
     }
 
     return render(request, 'gestionar_marca.html', context)
-
+@never_cache
 @login_required
 def gestionar_marca(request):
     marcas = Marca.objects.all()
     return render(request, 'gestionar_marca.html', {'marcas': marcas})
-
+@never_cache
 @login_required
 def añadir_marca(request):
     if request.method == 'POST':

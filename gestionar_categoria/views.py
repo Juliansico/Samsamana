@@ -10,17 +10,17 @@ from .forms import  CategoriaForm
 
 # Create your views here.
 
-
+@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
-
+@never_cache
 @login_required
 def gestionar_categoria(request):
     categorias = Categoria.objects.all()
     return render(request, 'gestionar_categoria.html', {'categorias': categorias})
 
 
-
+@never_cache
 @login_required
 def añadir_categoria(request):
     if request.method == 'POST':
@@ -49,7 +49,7 @@ def editar_categoria(request, categoria_id):
     return render(request, 'editar_categoria.html', {'form': form, 'categoria': categoria})
 
 
-
+@never_cache
 @login_required
 def activar_inactivar_categoria(request, categoria_id):
     categoria = get_object_or_404(Categoria, id=categoria_id)
@@ -59,7 +59,7 @@ def activar_inactivar_categoria(request, categoria_id):
     messages.success(request, f'Categoría {estado} con éxito.')
     return redirect('gestionar_categoria')
 
-
+@never_cache
 @login_required
 def filtrar_categorias(request):
     estado_filtro = request.GET.get('estado', None)

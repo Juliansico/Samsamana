@@ -7,17 +7,19 @@ from gestionar_categoria.models import Categoria
 from gestionar_marca.models import Marca
 from gestionar_presentacion.models import Presentacion
 import logging
-
+from django.views.decorators.cache import never_cache
 # Create your views here.
+
+@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
-
+@never_cache
 @login_required
 def gestionar_productos(request):
     productos = Producto.objects.all()
     return render(request, 'gestionar_productos.html', {'productos': productos})
 
-
+@never_cache
 @login_required
 def añadir_producto(request):
     if request.method == 'POST':
@@ -30,7 +32,7 @@ def añadir_producto(request):
         form = ProductoForm()
     return render(request, 'añadir_producto.html', {'form': form})
 
-
+@never_cache
 @login_required
 def editar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
@@ -44,7 +46,7 @@ def editar_producto(request, producto_id):
         form = ProductoForm(instance=producto)
     return render(request, 'editar_producto.html', {'form': form, 'producto': producto})
 
-
+@never_cache
 @login_required
 def filtrar_productos(request):
     estado_filtro = request.GET.get('estado', None)
@@ -84,7 +86,7 @@ def filtrar_productos(request):
     }
 
     return render(request, 'gestionar_productos.html', context)
-
+@never_cache
 @login_required
 def activar_inactivar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)

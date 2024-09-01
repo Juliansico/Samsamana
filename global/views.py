@@ -1,7 +1,10 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login, AuthenticationForm
+from django.contrib.auth import authenticate, login, logout, AuthenticationForm
 from django.http import HttpResponseRedirect
-
+from django.shortcuts import redirect
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_POST
+@never_cache
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -16,3 +19,4 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
+

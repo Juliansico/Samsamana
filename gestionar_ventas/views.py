@@ -6,7 +6,8 @@ from django.db.models import Sum
 from django.contrib import messages
 from .models import Venta, Producto
 from .forms import VentaForm
-
+from django.views.decorators.cache import never_cache
+@never_cache
 @login_required
 def gestionar_ventas(request):
     ventas = Venta.objects.all()
@@ -22,10 +23,10 @@ def gestionar_ventas(request):
     }
 
     return render(request, 'gestionar_ventas.html', context)
-
+@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
-
+@never_cache
 def editar_venta(request, venta_id):
     venta = get_object_or_404(Venta, id=venta_id)
     if request.method == 'POST':
@@ -38,7 +39,7 @@ def editar_venta(request, venta_id):
         form = VentaForm(instance=venta)
     return render(request, 'editar_venta.html', {'form': form, 'venta': venta})
 
-
+@never_cache
 @login_required
 def consultar_venta(request):
     if request.method == 'POST':
@@ -47,7 +48,7 @@ def consultar_venta(request):
         return render(request, 'consultar_venta.html', {'ventas': ventas})
     return render(request, 'consultar_venta.html')
 
-
+@never_cache
 @login_required
 def añadir_venta(request):
     if request.method == 'POST':
@@ -61,7 +62,7 @@ def añadir_venta(request):
     else:
         form = VentaForm()
     return render(request, 'añadir_venta.html', {'form': form})
-
+@never_cache
 @login_required
 def activar_desactivar_venta(request, venta_id):
     venta = get_object_or_404(Venta, id=venta_id, id_Usuario=request.user)
@@ -73,7 +74,7 @@ def activar_desactivar_venta(request, venta_id):
 
 
 from django.http import JsonResponse
-
+@never_cache
 def obtener_precio_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     return JsonResponse({'precio': producto.precio})

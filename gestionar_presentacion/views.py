@@ -3,10 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Presentacion
 from .forms import PresentacionForm
+from django.views.decorators.cache import never_cache
 
-
+@never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
+
+
+@never_cache
 @login_required
 
 def gestionar_presentacion(request):
@@ -22,7 +26,7 @@ def gestionar_presentacion(request):
     return render(request, 'gestionar_presentacion.html', {'presentaciones': presentaciones, 'form': form})
 
 
-
+@never_cache
 @login_required
 def añadir_presentacion(request):
     if request.method == 'POST':
@@ -61,7 +65,7 @@ def activar_inactivar_presentacion(request, presentacion_id):
     return redirect('gestionar_presentacion')
 
 
-
+@never_cache
 @login_required
 def filtrar_presentaciones(request):
     estado_filtro = request.GET.get('estado', None)
