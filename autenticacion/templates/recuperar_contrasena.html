@@ -1,9 +1,83 @@
-{% block content %}
-<h2>Recuperar Contraseña</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Enviar correo de recuperación</button>
-</form>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña - Samsamana</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}?v2.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form">
+            <img src="{% static 'img/Samsamanalogo1PNG.png' %}" alt="Samsamana Logo" class="logo">
+            <h2>Recuperar Contraseña</h2>
+            <form id="recuperar-form" method="post" action="{% url 'recuperar_contrasena' %}">
+                {% csrf_token %}
+                <div class="group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" class="input-email" placeholder="Correo Electrónico" required>
+                </div>
+                <button type="submit" class="btn-login">Enviar</button>
+            </form>
+            <div class="additional-links">
+                <a href="{% url 'login' %}">Volver al inicio de sesión</a>
+            </div>
+        </div>
+        <div class="login-image">
+            <div class="overlay"></div>
+            <img src="{% static 'img/balneario.jpg' %}" alt="Imagen de fondo" class="full-background-image">
+            <div class="image-text">
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('recuperar-form');
+            const emailInput = document.getElementById('email');
 
-{% endblock %}
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Siempre prevenir el envío por defecto
+
+                const email = emailInput.value.trim();
+                const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+                if (!email) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Campo vacío',
+                        text: 'El campo de correo electrónico no puede estar vacío.',
+                        confirmButtonText: 'Intentar de nuevo'
+                    });
+                    return;
+                }
+                
+                if (!emailPattern.test(email)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Correo inválido',
+                        text: 'Por favor, ingresa un correo electrónico válido. Debe incluir un signo "@".',
+                        confirmButtonText: 'Intentar de nuevo'
+                    });
+                    return;
+                }
+
+                // Si todo está bien, envía el formulario
+                form.submit();
+            });
+        });
+
+        {% if form.errors %}
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Hubo un error al enviar el correo electrónico. Por favor, intenta de nuevo.',
+            confirmButtonText: 'Intentar de nuevo'
+        });
+        {% endif %}
+    </script>
+</body>
+</html>

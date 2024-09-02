@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout
+from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
@@ -11,15 +11,11 @@ from django.urls import reverse_lazy
 from .forms import FormularioRegistro 
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth import get_user_model
-from django.views.decorators.cache import never_cache
-from django.views.decorators.http import require_POST
 import logging
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
-class CustomPasswordResetConfirmView(PasswordResetConfirmView):
-    template_name = 'restablecer_contrasena.html'
-    success_url = reverse_lazy('reset_password_complete')
+
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -39,7 +35,7 @@ def registrar(request):
             return redirect('login')
     else:
         formulario = FormularioRegistro()
-    return render(request, 'registrar.html', {'formulario': formulario})
+    return render(request, 'registrar_usuario.html', {'form': formulario})
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'restablecer_contrasena.html'
@@ -63,4 +59,3 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
         return user
-    

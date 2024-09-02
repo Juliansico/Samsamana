@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Usuario - Samsamana</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}?v3.4">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="registro-container">
+        <div class="registro-form">
+            <img src="{% static 'img/Samsamanalogo1PNG.png' %}" alt="Samsamana Logo" class="logo logo-registro">
+            <h2>Registrar Usuario</h2>
+            <form id="registro-form" method="post" action="{% url 'registrar' %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="registro-group">
+                    <i class="fas fa-user"></i>
+                    <span>Nombre de usuario</span>
+                    {{ form.username }}
+                </div>
+                <div class="registro-group">
+                    <i class="fas fa-user"></i>
+                    <span>Apellido</span>
+                    {{ form.apellido }} 
+                </div>
+                <div class="registro-group">
+                    <i class="fas fa-envelope"></i>
+                    <span>Correo electrónico</span>
+                    {{ form.email }}
+                </div>
+                <div class="registro-group">
+                    <i class="fas fa-id-card"></i>
+                    <span>Tipo de documento</span>
+                    {{ form.tipo_documento }}   
+                </div>
+                <div class="registro-group">
+                    <i class="fas fa-id-card"></i>
+                    <span>Documento</span>
+                    {{ form.documento }}
+                </div>
+                <div class="registro-group">
+                    <i class="fas fa-phone"></i>
+                    <span>Teléfono</span>
+                    {{ form.telefono }}
+                </div>
+                <div class="registro-group">
+                    <i class="fas fa-lock"></i>
+                    <span>Contraseña</span>
+                    {{ form.password1 }}
+                </div>
+                <div class="registro-group">
+                    <i class="fas fa-lock"></i>
+                    <span>Confirmar contraseña</span>
+                    {{ form.password2 }}
+                </div>
+                <button type="submit" class="registro-btn">Registrar</button>
+            </form>
+            <div class="registro-links">
+                <a href="{% url 'login' %}">Volver al inicio de sesión</a>
+            </div>
+        </div>
+        <div class="login-image">
+            <div class="overlay"></div>
+            <img src="{% static 'C:\Users\ADSO\Downloads\lolo\inventary\static\img\registrar.jpg' %}" alt="Imagen de fondo" class="full-background-image">
+            <div class="image-text">
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registro-form');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Siempre prevenir el envío por defecto
+
+                const password1 = document.getElementById('id_password1').value.trim();
+                const password2 = document.getElementById('id_password2').value.trim();
+
+                if (password1 !== password2) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Contraseñas no coinciden',
+                        text: 'Las contraseñas ingresadas no coinciden. Por favor, intenta de nuevo.',
+                        confirmButtonText: 'Intentar de nuevo'
+                    });
+                    return;
+                }
+
+                // Si todo está bien, envía el formulario
+                form.submit();
+            });
+        });
+
+        {% if form.errors %}
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Hubo un error al registrar el usuario. Por favor, intenta de nuevo.',
+            confirmButtonText: 'Intentar de nuevo'
+        });
+        {% endif %}
+    </script>
+</body>
