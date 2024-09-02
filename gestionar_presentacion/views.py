@@ -39,7 +39,7 @@ def añadir_presentacion(request):
         form = PresentacionForm()
     return render(request, 'añadir_presentacion.html', {'form': form})
 
-
+@never_cache
 @login_required
 def editar_presentacion(request, presentacion_id):
     presentacion = get_object_or_404(Presentacion, id=presentacion_id)
@@ -54,7 +54,7 @@ def editar_presentacion(request, presentacion_id):
     return render(request, 'editar_presentacion.html', {'form': form, 'presentacion': presentacion})
 
 
-
+@never_cache
 @login_required
 def activar_inactivar_presentacion(request, presentacion_id):
     presentacion = get_object_or_404(Presentacion, id=presentacion_id)

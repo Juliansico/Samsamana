@@ -43,7 +43,7 @@ def editar_proveedor(request, proveedor_id):
     return render(request, 'editar_proveedor.html', {'form': form, 'proveedor': proveedor})
 
 
-
+@never_cache
 @login_required
 def activar_inactivar_proveedor(request, proveedor_id):
     proveedor = get_object_or_404(Proveedor, id=proveedor_id)

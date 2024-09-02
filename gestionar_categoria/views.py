@@ -34,7 +34,7 @@ def añadir_categoria(request):
     return render(request, 'añadir_categoria.html', {'form': form})
 
 
-
+@never_cache
 @login_required
 def editar_categoria(request, categoria_id):
     categoria = get_object_or_404(Categoria, id=categoria_id)
