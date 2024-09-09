@@ -8,10 +8,10 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_decode
 from django.urls import reverse_lazy
-from .forms import FormularioRegistro 
-from django.contrib.auth.views import PasswordResetConfirmView
+from .forms import FormularioRegistro
 from django.contrib.auth import get_user_model
 import logging
+
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
@@ -39,19 +39,15 @@ def registrar(request):
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'restablecer_contrasena.html'
-    success_url = reverse_lazy('reset_password_complete')
+    success_url = reverse_lazy('login')
 
     def form_valid(self, form):
-        uidb64 = self.kwargs.get('uidb64')  
-        user = self.get_user(uidb64)
-        if user is not None:
-            user.set_password(form.cleaned_data['new_password1'])
-            user.reset_token = ''  
-            user.save()
-            return super().form_valid(form)
-        else:
-            return self.form_invalid(form)
-    
+        # Guarda la nueva contraseña
+        form.save()
+        logger.info(f"Contraseña cambiada para el usuario: {self.request.user.username}")
+        return super().form_valid(form)
+
+
     def get_user(self, uidb64):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()

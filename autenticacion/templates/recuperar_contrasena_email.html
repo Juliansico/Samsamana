@@ -1,17 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Restablecer Contraseña</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña</title>
+    <style>
+        /* Estilos en línea para asegurar compatibilidad con la mayoría de clientes de correo */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 0 0 8px 8px;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+        }
+        .content a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #777;
+        }
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-    <p>Hola {{ user.username }},</p>
-
-    <p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p>
-    
-    <p><a href="{{ protocol }}://{{ domain }}{% url 'restablecer_contrasena' uidb64=uid token=token %}">Restablecer Contraseña</a></p>
-    
-    <p>Este enlace expirará en {{ expiration_days }} días.</p>
-    
-    <p>Saludos,<br>El equipo de {{ site_name }}</p>
+    <div class="container">
+        <div class="header">
+            <h1>Restablece tu contraseña</h1>
+        </div>
+        <div class="content">
+            <p>Hola,</p>
+            <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta. Si no hiciste esta solicitud, simplemente puedes ignorar este correo.</p>
+            <p>Para restablecer tu contraseña, haz clic en el botón de abajo:</p>
+            <a href="{{ protocol }}://{{ domain }}{% url 'restablecer_contrasena' uidb64=uid token=token %}">Restablecer Contraseña</a>
+            <p>Este enlace es válido solo por 24 horas.</p>
+            <p>Gracias,<br>Atenamente el equipo  de Samsamana</p>
+        </div>
+        <div class="footer">
+            <p>Si presentas problemas para hacer clic en el enlace, copia y pega la siguiente URL en tu navegador:</p>
+            <p><a href="{{ protocol }}://{{ domain }}{% url 'restablecer_contrasena' uidb64=uid token=token %}">{{ protocol }}://{{ domain }}{% url 'restablecer_contrasena' uidb64=uid token=token %}</a></p>
+        </div>
+    </div>
 </body>
 </html>
