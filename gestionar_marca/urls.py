@@ -12,4 +12,6 @@ urlpatterns = [
     path('marca/editar/<int:marca_id>/', views.editar_marca, name='editar_marca'),
     path('marca/activar-inactivar/<int:marca_id>/', views.activar_inactivar_marca, name='activar_inactivar_marca'),
     path('marcas/', views.filtrar_marcas, name='filtrar_marcas'),
+    path('reporte_marcas_pdf/', views.reporte_marcas_pdf, name='reporte_marcas_pdf'),
+    path('reporte_marcas_excel/', views.reporte_marcas_excel, name='reporte_marcas_excel'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

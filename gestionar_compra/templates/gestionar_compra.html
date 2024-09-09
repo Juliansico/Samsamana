@@ -53,5 +53,8 @@
         </tr>
         {% endfor %}
     </tbody>
+    <a href="{% url 'reporte_compras_excel' %}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">Exportar a Excel</a>
+    <a href="{% url 'reporte_compras_pdf' %}" class="btn btn-primary" style="background-color: #f44336; border-color: #f44336;">Exportar a PDF</a>
+    
 </table>
 {% endblock %}

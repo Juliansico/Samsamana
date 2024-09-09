@@ -10,5 +10,7 @@ urlpatterns = [
     path('usuarios/editar/<int:usuario_id>/', views.editar_usuario, name='editar_usuario'),
     path('usuarios/activar-inactivar/<int:usuario_id>/', views.activar_inactivar_usuario, name='activar_inactivar_usuario'),
     path('filtrar_usuarios', views.filtrar_usuarios, name='filtrar_usuarios'),
+    path('gestionar-usuarios/pdf/', views.reporte_usuarios_pdf, name='reporte_usuarios_pdf'),
+    path('gestionar-usuarios/excel/', views.reporte_usuarios_excel, name='reporte_usuarios_excel'),
     
 ]

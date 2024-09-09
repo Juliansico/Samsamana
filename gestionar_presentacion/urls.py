@@ -12,4 +12,6 @@ urlpatterns = [
     path('presentacion/editar/<int:presentacion_id>/', views.editar_presentacion, name='editar_presentacion'),
     path('presentacion/activar-inactivar/<int:presentacion_id>/', views.activar_inactivar_presentacion, name='activar_inactivar_presentacion'),
     path('presentaciones/', views.filtrar_presentaciones, name='filtrar_presentaciones'),
+    path('reporte_presentaciones_pdf/', views.reporte_presentaciones_pdf, name='reporte_presentaciones_pdf'),
+    path('reporte_presentaciones_excel/', views.reporte_presentaciones_excel, name='reporte_presentaciones_excel'),
 ]

@@ -7,112 +7,104 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-image: url('static/img/fondo.jpeg');
+    background-image: url('/static/img/fondo.jpeg'); /* Cambia esto con la ruta correcta de tu imagen */
     background-size: cover;
     background-position: center;
 }
 
-/* Contenedor principal */
-.login-container,
-.registro-container {
+/* Estilo del contenedor de login */
+.login-container {
     display: flex;
     width: 90%;
-    max-width: 1200px;
-    min-height: 600px;
-    background-color: rgb(255, 255, 255);
+    max-width: 1000px;
+    height: 700px;
+    background-color: rgb(255, 255, 255); /* Fondo con opacidad para ver el fondo detrás */
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
+    box-shadow: 0 0 20px rgba(128, 120, 120, 0.1);
+}
+
+/* Logo */
+.logo {
+    max-width: 400px; /* Aumenta el tamaño máximo del logo */
+    
+    align-self: center;
+    margin-top: 10%;
+
 }
 
 /* Formulario */
-.login-form,
-.registro-form {
+.login-form {
     flex: 1;
     padding: 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-}
-
-/* Logo */
-.logo {
-    width: 70%;
-    height: auto;
-    margin-bottom: 20px;
 }
 
 h2 {
     margin-bottom: 30px;
     color: #333;
-    font-size: 24px;
+    font-size: 28px;
     text-align: center;
 }
 
-/* imput login configuracion */
-.input-group,
-.group {
-    width: 90%;
-    margin-bottom: 20px;
+.input-group {
     position: relative;
+    margin-bottom: 20px;
 }
 
-.registro-group,
-.group{
-    width: 90%;
-    margin-bottom: 20px;
-    position: relative;
+.input-group i {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #aaa;
 }
 
 input[type="text"],
-input[type="password"],
-input[type="email"],
-select {
-    width: 75%;
-    padding: 10px 15px 10px 40px;
+input[type="password"] {
+    width: 87%;
+    padding: 15px 15px 15px 40px; /* Espacio adicional para los íconos */
     border: 1.5px solid #333;
     border-radius: 10px;
     font-size: 16px;
+    background-color: #333;
+    color: #f1f1f1;
     transition: border-color 0.3s;
 }
 
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #000000;
+    outline: none;
+}
+
 /* Botones */
-.btn-login,
-.registro-btn {
+.btn-login {
+    margin-top: 20px;
     padding: 15px;
-    background-color: #000000;
+    background-color: #333;
     color: rgb(255, 255, 255);
     border: none;
     border-radius: 10px;
     cursor: pointer;
     font-size: 18px;
-    transition: background-color 0.3s, transform 0.2s;
-    display: block;
-    margin: 15px auto;
-    width: 200px;
-    text-align: center;
-    font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+    width: 100%;
 }
 
-.btn-login:hover,
-.registro-btn:hover {
-    background-color: #333333;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+.btn-login:hover {
+    background-color: #000000;
 }
 
 /* Enlaces adicionales */
-.additional-links,
-.registro-links {
-    margin-top: -10px;
+.additional-links {
+    margin-top: 20px;
     text-align: center;
 }
 
-.additional-links a,
-.registro-links a {
+.additional-links a {
     color: #000000;
     text-decoration: none;
     font-size: 14px;
@@ -120,88 +112,38 @@ select {
 
 /* Imagen del login */
 .login-image {
-    display: none;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 20px 20px 0; /* Ajusta los bordes redondeados del contenedor de imagen */
 }
 
-/* Media queries para responsividad */
-@media (min-width: 768px) {
-    .login-container,
-    .registro-container {
-        width: 80%;
-    }
-
-    .login-image {
-        display: block;
-        flex: 1;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .full-background-image {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
+.full-background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen cubra todo el espacio */
 }
 
-@media (min-width: 1024px) {
-    .login-container,
-    .registro-container {
-        width: 70%;
-    }
-
-    .login-form,
-    .registro-form {
-        padding: 60px;
-    }
-}
-
-/* Formulario de Registro - Ajustes para hacerlo más compacto */
-.registro-form {
-    padding: 20px; /* Reducir padding para mayor compacidad */
-    overflow-y: auto;
-    max-height: 80vh;
-}
-
-.registro-group {
-    margin-bottom: 5px; /* Reducir espacio entre los grupos de input */
-}
-
-.registro-group span {
-    width: 120px; /* Reducir el ancho de las etiquetas para ajustarse mejor */
-    margin-bottom: 55px; /* Reducir el espacio debajo de las etiquetas */
-}
-
-input[type="text"],
-input[type="password"],
-input[type="email"],
-select {
-    width: 100%; /* Aumentar el ancho para aprovechar mejor el espacio */
-    padding: 8px 10px 8px 35px; /* Reducir el padding para hacer los campos más compactos */
-    border-radius: 10px; /* Ajustar el borde para un diseño más compacto */
-    font-size: 14px; /* Reducir un poco el tamaño de la fuente */
-}
-
-/* Botones en el formulario de registro */
-.registro-btn {
-    padding: 10px; /* Reducir padding para hacer el botón más compacto */
-    width: 150px; /* Reducir el ancho del botón */
-    font-size: 16px; /* Ajustar tamaño de la fuente para el botón */
-    margin: 10px auto; /* Reducir el margen */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Oscurece la imagen de fondo para resaltar el texto */
 }
 
 
-/* Estilos para SweetAlert2 */
+/* Placeholders */
+::placeholder {
+    font-family: 'Roboto', sans-serif;
+    color: #aaa;
+}
+
+/* login.css */
 .swal2-custom-popup {
     border-radius: 10px;
     padding: 10px;
@@ -218,6 +160,11 @@ select {
     font-size: 18px;
 }
 
+.swal2-custom-footer {
+    color: #721c24;
+    font-size: 14px;
+}
+
 .swal2-custom-confirm-button {
     background-color: rgb(0, 0, 0);
     color: white;
@@ -226,8 +173,9 @@ select {
     padding: 10px 20px;
     font-size: 16px;
 }
-/* Estilo específico para el logo en la página de registro */
-.logo-registro {
-    width: 50%;
-    margin-bottom: -70px; /* Ajusta el valor según lo necesites */
+.error-message {
+    color: rgb(0, 0, 0);
+    margin-top: 5px;
+    list-style-type: disc;
+    padding-left: 20px;
 }
