@@ -2,22 +2,100 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Añadir Nuevo Usuario</h2>
-    <form method="post">
+    <h2 class="mb-4">Añadir Nuevo Usuario</h2>
+    <form method="post" id="usuarioForm">
         {% csrf_token %}
         {% for field in form %}
-            <div class="form-group">
+            <div class="form-group mb-3">
                 {{ field.label_tag }}
                 {{ field }}
                 {% if field.errors %}
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger mt-1">
                         {{ field.errors }}
                     </div>
                 {% endif %}
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary mt-3">Guardar Usuario</button>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{% url 'gestionar_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
     </form>
-    <a href="{% url 'gestionar_usuarios' %}" class="btn btn-secondary mt-3">Volver</a>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('usuarioForm');
+    const nombreInput = form.querySelector('[name="username"]');
+    const apellidoInput = form.querySelector('[name="apellido"]');
+    const tipoDocumentoSelect = form.querySelector('[name="tipo_documento"]');
+    const documentoInput = form.querySelector('[name="documento"]');
+    const telefonoInput = form.querySelector('[name="telefono"]');
+    const emailInput = form.querySelector('[name="email"]');
+    const password1Input = form.querySelector('[name="password1"]');
+    const password2Input = form.querySelector('[name="password2"]');
+    const rolUsuarioSelect = form.querySelector('[name="rol_usuario"]');
+
+    // Cambiar etiqueta de "Nombre de usuario" a "Nombre"
+    const nombreLabel = form.querySelector('label[for="id_username"]');
+    if (nombreLabel) {
+        nombreLabel.textContent = 'Nombre:';
+    }
+
+    // Validación para nombre y apellido (solo letras)
+    const letrasRegex = /^[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+$/;
+    nombreInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^A-Za-zÁáÉéÍíÓóÚúÑñ\s]/g, '');
+    });
+    apellidoInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^A-Za-zÁáÉéÍíÓóÚúÑñ\s]/g, '');
+    });
+
+    // Ocultar opciones de tipo de documento hasta que se haga clic
+    tipoDocumentoSelect.innerHTML = '<option value="">Seleccione...</option>' + tipoDocumentoSelect.innerHTML;
+
+    // Validación para número de documento (solo números, máximo 10)
+    documentoInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    // Validación para número de teléfono (solo números, máximo 10)
+    telefonoInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    // Validación de email
+    emailInput.addEventListener('change', function() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(this.value)) {
+            this.setCustomValidity('Por favor, ingrese un correo electrónico válido.');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    // Validación de contraseñas
+    function validarContraseñas() {
+        if (password1Input.value !== password2Input.value) {
+            password2Input.setCustomValidity('Las contraseñas no coinciden.');
+        } else {
+            password2Input.setCustomValidity('');
+        }
+    }
+
+    password1Input.addEventListener('change', validarContraseñas);
+    password2Input.addEventListener('change', validarContraseñas);
+
+    // Configurar opciones de rol de usuario
+    rolUsuarioSelect.innerHTML = '<option value="">Seleccione...</option><option value="administrador">Administrador</option><option value="empleado">Empleado</option>';
+
+    // Validación del formulario antes de enviar
+    form.addEventListener('submit', function(event) {
+        if (password1Input.value !== password2Input.value) {
+            event.preventDefault();
+            alert('Las contraseñas no coinciden. Por favor, verifíquelas.');
+        }
+    });
+});
+</script>
 {% endblock %}
