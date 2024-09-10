@@ -20,7 +20,6 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib.colors import Color
 from .models import Producto
-
 from openpyxl.drawing.image import Image
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
@@ -49,6 +48,7 @@ def añadir_producto(request):
     else:
         form = ProductoForm()
     return render(request, 'añadir_producto.html', {'form': form})
+
 
 @never_cache
 @login_required

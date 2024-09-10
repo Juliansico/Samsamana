@@ -1,6 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import  Producto
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+
 
 
 
@@ -28,10 +31,45 @@ class BaseModelForm(forms.ModelForm):
 
 
 
-class ProductoForm(BaseModelForm):
+from django import forms
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+from .models import Producto
+from decimal import Decimal
+
+class ProductoForm(forms.ModelForm):
+    nombre = forms.CharField(
+        max_length=255,
+        validators=[
+            RegexValidator(
+                regex='^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$',
+                message='El nombre solo puede contener letras y espacios.',
+                code='invalid_name'
+            )
+        ]
+    )
+    precio = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = Producto
         fields = ['nombre', 'marca', 'presentacion', 'categoria', 'precio', 'unidad_de_medida', 'estado']
-        widgets = {
-            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+        self.fields['estado'].widget.attrs.update({'class': 'form-check-input'})
+
+    def clean_precio(self):
+        precio = self.cleaned_data.get('precio')
+        try:
+            # Removemos los puntos de los miles y reemplazamos la coma por punto
+            precio_limpio = precio.replace('.', '').replace(',', '.')
+            precio_decimal = Decimal(precio_limpio)
+            if precio_decimal < 0:
+                raise ValidationError("El precio no puede ser negativo.")
+            return precio_decimal
+        except:
+            raise ValidationError("Por favor, ingrese un precio válido.")

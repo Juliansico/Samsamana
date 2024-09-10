@@ -1,11 +1,41 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Añadir Producto{% endblock %}
 
 {% block content %}
 <h2>Añadir Producto</h2>
-<form method="post">
+
+<form method="post" novalidate>
     {% csrf_token %}
-    {{ form.as_p }}
+    {% for field in form %}
+        <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="alert alert-danger mt-2">
+                    {{ field.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
     <button type="submit" class="btn btn-primary">Guardar</button>
     <a href="{% url 'gestionar_productos' %}" class="btn btn-secondary">Cancelar</a>
 </form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        new Cleave('#id_precio', {
+            numeral: true,
+            numeralThousandsGroupStyle: 'thousand',
+            numeralDecimalMark: ',',
+            delimiter: '.',
+            numeralPositiveOnly: true,
+            numeralDecimalScale: 2
+        });
+    });
+</script>
 {% endblock %}
