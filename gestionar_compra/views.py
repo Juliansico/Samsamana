@@ -181,40 +181,44 @@ def reporte_compras_excel(request):
     header_fill = PatternFill(start_color="25b6e6", end_color="25b6e6", fill_type="solid")
     alignment_center = Alignment(horizontal="center", vertical="center")
 
+    # Añadir logo (más pequeño)
+    logo_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path)
+        img.width = 80  # Ajustar el tamaño del logo
+        img.height = 40
+        ws.add_image(img, 'A1')
+
+    # Añadir título
+    ws.merge_cells('B1:H1')
+    title_cell = ws['B1']
+    title_cell.value = "TABLA COMPRAS - BALNEARIO SAMSAMANA"
+    title_cell.font = Font(bold=True, size=16)
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+
     # Añadir encabezados
     headers = ["ID", "Fecha Compra", "Total Compra", "Cantidad Producto", "Proveedor", "Estado"]
     for col_num, header in enumerate(headers, 1):
-        cell = ws.cell(row=1, column=col_num, value=header)
+        cell = ws.cell(row=3, column=col_num, value=header)
         cell.font = header_font
         cell.fill = header_fill
         cell.alignment = alignment_center
 
     # Añadir datos de compras
     compras = Compra.objects.all()
-    for row_num, compra in enumerate(compras, 2):
-        ws.cell(row=row_num, column=1, value=compra.id)
-        ws.cell(row=row_num, column=2, value=compra.fecha_Compra.strftime('%Y-%m-%d %H:%M:%S'))
-        ws.cell(row=row_num, column=3, value=compra.total_Compra)
-        ws.cell(row=row_num, column=4, value=compra.cantidad_Producto)
-        ws.cell(row=row_num, column=5, value=compra.proveedor_Id.nombre)  # Asegúrate de que `nombre` es un atributo de `Proveedor`
-        ws.cell(row=row_num, column=6, value='Activo' if compra.estado else 'Inactivo')
+    for row_num, compra in enumerate(compras, 4):
+        ws.cell(row=row_num, column=1, value=compra.id).alignment = alignment_center
+        ws.cell(row=row_num, column=2, value=compra.fecha_Compra.strftime('%Y-%m-%d %H:%M:%S')).alignment = alignment_center
+        ws.cell(row=row_num, column=3, value=compra.total_Compra).alignment = alignment_center
+        ws.cell(row=row_num, column=4, value=compra.cantidad_Producto).alignment = alignment_center
+        ws.cell(row=row_num, column=5, value=compra.proveedor_Id.nombre).alignment = alignment_center  # Verificar que 'nombre' sea el atributo correcto
+        ws.cell(row=row_num, column=6, value='Activo' if compra.estado else 'Inactivo').alignment = alignment_center
 
     # Ajustar el ancho de las columnas
-    for col_num in range(1, len(headers) + 1):
+    column_widths = [5, 20, 15, 20, 30, 10]  # Ajustar los anchos de columna según sea necesario
+    for col_num, width in enumerate(column_widths, 1):
         column_letter = get_column_letter(col_num)
-        ws.column_dimensions[column_letter].width = 20
-
-    # Añadir imagen de marca de agua
-    watermark_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
-    if os.path.exists(watermark_path):
-        try:
-            img = Image(watermark_path)
-            img.anchor = 'A1'  # Anclar la imagen en la celda A1
-            img.width = 400  # Ajusta el tamaño de la imagen según sea necesario
-            img.height = 300
-            ws.add_image(img)
-        except Exception as e:
-            print("Error al agregar la marca de agua en Excel:", e)
+        ws.column_dimensions[column_letter].width = width
 
     # Guardar el archivo en el buffer
     wb.save(buffer)
@@ -222,5 +226,5 @@ def reporte_compras_excel(request):
 
     # Preparar la respuesta HTTP
     response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="Reporte_compras.xlsx"'
+    response['Content-Disposition'] = 'attachment; filename="Reporte_compras_samsamana.xlsx"'
     return response

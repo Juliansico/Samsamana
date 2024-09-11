@@ -182,44 +182,41 @@ def reporte_marcas_excel(request):
     header_fill = PatternFill(start_color="25b6e6", end_color="25b6e6", fill_type="solid")
     alignment_center = Alignment(horizontal="center", vertical="center")
 
+    # Añadir logo (más pequeño)
+    logo_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path)
+        img.width = 80  # Ajustar el tamaño del logo
+        img.height = 40
+        ws.add_image(img, 'A1')
+
+    # Añadir título
+    ws.merge_cells('B1:E1')
+    title_cell = ws['B1']
+    title_cell.value = "TABLA MARCAS - BALNEARIO SAMSAMANA"
+    title_cell.font = Font(bold=True, size=16)
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+
     # Añadir encabezados
     headers = ["ID", "Nombre", "Estado"]
     for col_num, header in enumerate(headers, 1):
-        cell = ws.cell(row=1, column=col_num, value=header)
+        cell = ws.cell(row=3, column=col_num, value=header)
         cell.font = header_font
         cell.fill = header_fill
         cell.alignment = alignment_center
 
     # Añadir datos de marcas
     marcas = Marca.objects.all()
-    for row_num, marca in enumerate(marcas, 2):
-        ws.cell(row=row_num, column=1, value=marca.id)
-        ws.cell(row=row_num, column=2, value=marca.nombre)
-        ws.cell(row=row_num, column=3, value='Activo' if marca.estado else 'Inactivo')
+    for row_num, marca in enumerate(marcas, 4):
+        ws.cell(row=row_num, column=1, value=marca.id).alignment = alignment_center
+        ws.cell(row=row_num, column=2, value=marca.nombre).alignment = alignment_center
+        ws.cell(row=row_num, column=3, value='Activo' if marca.estado else 'Inactivo').alignment = alignment_center
 
     # Ajustar el ancho de las columnas
-    for col_num in range(1, len(headers) + 1):
+    column_widths = [5, 30, 10]  # Ajustar los anchos de columna según sea necesario
+    for col_num, width in enumerate(column_widths, 1):
         column_letter = get_column_letter(col_num)
-        ws.column_dimensions[column_letter].width = 20
-
-    # Añadir la imagen de marca de agua centrada
-    watermark_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
-    if os.path.exists(watermark_path):
-        try:
-            img = Image(watermark_path)
-            img.width = 500  # Ajusta el ancho de la imagen según sea necesario
-            img.height = 300  # Ajusta la altura de la imagen según sea necesario
-            
-            # Calcular una posición más central para la imagen
-            center_col = (ws.max_column + 1) // 3  # Mueve la imagen más a la izquierda si es necesario
-            center_row = (ws.max_row + 10) // 2    # Baja la imagen hacia el centro de la hoja
-            center_cell = f"{get_column_letter(center_col)}{center_row}"
-
-            # Colocar la imagen en la nueva celda calculada
-            ws.add_image(img, center_cell)
-
-        except Exception as e:
-            print("Error al agregar la marca de agua:", e)
+        ws.column_dimensions[column_letter].width = width
 
     # Guardar el archivo en el buffer
     wb.save(buffer)
@@ -227,5 +224,5 @@ def reporte_marcas_excel(request):
 
     # Preparar la respuesta HTTP
     response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="Reporte_marcas.xlsx"'
+    response['Content-Disposition'] = 'attachment; filename="Reporte_marcas_samsamana.xlsx"'
     return response

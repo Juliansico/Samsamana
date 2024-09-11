@@ -115,14 +115,14 @@ def reporte_ventas_pdf(request):
 
     # Añadir títulos
     p.setFont("Helvetica-Bold", 24)
-    p.drawString(margin, y_position, "SAMSAMANA")
+    p.drawCentredString(width / 2, y_position, "SAMSAMANA")
     y_position -= 30
     p.setFont("Helvetica", 18)
-    p.drawString(margin, y_position, "Reporte de Ventas")
+    p.drawCentredString(width / 2, y_position, "Reporte de Ventas")
     y_position -= 50
 
     # Crear tabla con datos de ventas
-    column_widths = [50, 150, 100, 150, 100, 100]
+    column_widths = [30, 100, 80, 100, 80, 90]
     headers = ["ID", "Producto", "Cantidad", "Fecha", "Total", "Estado"]
     data = [headers]
 
@@ -149,11 +149,16 @@ def reporte_ventas_pdf(request):
         ('ALIGN', (0, 1), (-1, -1), 'CENTER')
     ])
     table.setStyle(style)
-    
-    # Ajustar la posición de la tabla
+
+    # Calcular el ancho total de la tabla
     table_width = sum(column_widths)
-    table_x = (width - table_width - 2 * margin) / 2 + margin
+    
+    # Calcular la posición x para centrar la tabla
+    table_x = (width - table_width) / 2
+    
+    # Ajustar la posición y de la tabla
     table_y = y_position - len(data) * row_height
+    
     table.wrapOn(p, table_width, height - 2 * margin)
     table.drawOn(p, table_x, table_y)
 
@@ -177,51 +182,44 @@ def reporte_ventas_excel(request):
     header_fill = PatternFill(start_color="25b6e6", end_color="25b6e6", fill_type="solid")
     alignment_center = Alignment(horizontal="center", vertical="center")
 
+    # Añadir logo (más pequeño) en la celda A1
+    logo_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path)
+        img.width = 80  # Ajustar tamaño según necesidad
+        img.height = 40
+        ws.add_image(img, 'A1')
+
+    # Añadir título
+    ws.merge_cells('B1:G1')
+    title_cell = ws['B1']
+    title_cell.value = "TABLA VENTAS - BALNEARIO SAMSAMANA"
+    title_cell.font = Font(bold=True, size=16)
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+
     # Añadir encabezados
     headers = ["ID", "Producto", "Cantidad", "Fecha", "Total", "Estado"]
     for col_num, header in enumerate(headers, 1):
-        cell = ws.cell(row=1, column=col_num, value=header)
+        cell = ws.cell(row=2, column=col_num, value=header)
         cell.font = header_font
         cell.fill = header_fill
         cell.alignment = alignment_center
 
     # Añadir datos de ventas
     ventas = Venta.objects.all()
-    for row_num, venta in enumerate(ventas, 2):
-        ws.cell(row=row_num, column=1, value=venta.id)
-        ws.cell(row=row_num, column=2, value=str(venta.producto))
-        ws.cell(row=row_num, column=3, value=venta.cantidad_Venta)
-        ws.cell(row=row_num, column=4, value=venta.fecha.strftime('%Y-%m-%d %H:%M:%S'))
-        ws.cell(row=row_num, column=5, value=venta.total_Venta)
-        ws.cell(row=row_num, column=6, value='Activo' if venta.estado else 'Inactivo')
+    for row_num, venta in enumerate(ventas, 3):
+        ws.cell(row=row_num, column=1, value=venta.id).alignment = alignment_center
+        ws.cell(row=row_num, column=2, value=str(venta.producto)).alignment = alignment_center
+        ws.cell(row=row_num, column=3, value=venta.cantidad_Venta).alignment = alignment_center
+        ws.cell(row=row_num, column=4, value=venta.fecha.strftime('%Y-%m-%d %H:%M:%S')).alignment = alignment_center
+        ws.cell(row=row_num, column=5, value=venta.total_Venta).alignment = alignment_center
+        ws.cell(row=row_num, column=6, value='Activo' if venta.estado else 'Inactivo').alignment = alignment_center
 
     # Ajustar el ancho de las columnas
-    for col_num in range(1, len(headers) + 1):
+    column_widths = [10, 30, 15, 20, 20, 15]  # Ajusta los anchos según sea necesario
+    for col_num, width in enumerate(column_widths, 1):
         column_letter = get_column_letter(col_num)
-        ws.column_dimensions[column_letter].width = 20
-
-    # Añadir la imagen de marca de agua centrada
-    watermark_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
-    if os.path.exists(watermark_path):
-        try:
-            img = Image(watermark_path)
-            
-            # Ajustar el tamaño de la imagen
-            img.width = 500  # Ajusta según sea necesario
-            img.height = 300  # Ajusta según sea necesario
-
-            # Calcular el centro de la hoja
-            max_row = ws.max_row + 5  # Añadir espacio adicional si es necesario
-            max_col = ws.max_column
-            center_col = (max_col + 1) // 2  # Columna central
-            center_row = (max_row + 1) // 2  # Fila central
-            center_cell = f"{get_column_letter(center_col)}{center_row}"
-
-            # Colocar la imagen en la celda central
-            ws.add_image(img, center_cell)
-
-        except Exception as e:
-            print("Error al agregar la marca de agua:", e)
+        ws.column_dimensions[column_letter].width = width
 
     # Guardar el archivo en el buffer
     wb.save(buffer)

@@ -1,22 +1,24 @@
-<!-- gestionar_proveedor/añadir_proveedor.html -->
 {% extends 'base.html' %}
 
 {% block content %}
 <h2>Añadir Nuevo Proveedor</h2>
 <form method="post">
     {% csrf_token %}
+    
     {% for field in form %}
     <div class="form-group">
-        {{ field.label_tag }}
+        <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
         {{ field }}
-        {% if field.help_text %}
-        <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% if field.errors %}
+            <div class="alert alert-danger">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
         {% endif %}
-        {% for error in field.errors %}
-        <div class="alert alert-danger">{{ error }}</div>
-        {% endfor %}
     </div>
     {% endfor %}
+
     <button type="submit" class="btn btn-primary">Guardar Proveedor</button>
 </form>
 <a href="{% url 'gestionar_proveedor' %}" class="btn btn-secondary">Volver</a>

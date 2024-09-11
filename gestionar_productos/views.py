@@ -191,6 +191,7 @@ def reporte_productos_pdf(request):
     response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="Reporte_productos.pdf"'
     return response
+
 def reporte_productos_excel(request):
     buffer = BytesIO()
     wb = Workbook()
@@ -201,52 +202,47 @@ def reporte_productos_excel(request):
     header_font = Font(bold=True, color="FFFFFF")
     header_fill = PatternFill(start_color="25b6e6", end_color="25b6e6", fill_type="solid")
     alignment_center = Alignment(horizontal="center", vertical="center")
+    
+    # Añadir logo (más pequeño)
+    logo_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path)
+        img.width = 80  # Hacer el logo más pequeño (ajustar según necesidad)
+        img.height = 40
+        ws.add_image(img, 'A1')
+
+    # Añadir título
+    ws.merge_cells('B1:H1')
+    title_cell = ws['B1']
+    title_cell.value = "TABLA PRODUCTOS - BALNEARIO SAMSAMANA"
+    title_cell.font = Font(bold=True, size=16)
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # Añadir encabezados
     headers = ["ID", "Nombre", "Marca", "Presentación", "Categoría", "Precio", "Unidad de medida", "Estado"]
     for col_num, header in enumerate(headers, 1):
-        cell = ws.cell(row=1, column=col_num, value=header)
+        cell = ws.cell(row=3, column=col_num, value=header)
         cell.font = header_font
         cell.fill = header_fill
         cell.alignment = alignment_center
 
     # Añadir datos de productos
     productos = Producto.objects.all()
-    for row_num, producto in enumerate(productos, 2):
-        ws.cell(row=row_num, column=1, value=producto.id)
-        ws.cell(row=row_num, column=2, value=producto.nombre)
-        ws.cell(row=row_num, column=3, value=producto.marca.nombre)
-        ws.cell(row=row_num, column=4, value=producto.presentacion.nombre)
-        ws.cell(row=row_num, column=5, value=producto.categoria.nombre)
-        ws.cell(row=row_num, column=6, value=producto.precio)
-        ws.cell(row=row_num, column=7, value=producto.unidad_de_medida)
-        ws.cell(row=row_num, column=8, value='Activo' if producto.estado else 'Inactivo')
+    for row_num, producto in enumerate(productos, 4):
+        ws.cell(row=row_num, column=1, value=producto.id).alignment = alignment_center
+        ws.cell(row=row_num, column=2, value=producto.nombre).alignment = alignment_center
+        ws.cell(row=row_num, column=3, value=producto.marca.nombre).alignment = alignment_center
+        ws.cell(row=row_num, column=4, value=producto.presentacion.nombre).alignment = alignment_center
+        ws.cell(row=row_num, column=5, value=producto.categoria.nombre).alignment = alignment_center
+        ws.cell(row=row_num, column=6, value=producto.precio).alignment = alignment_center
+        ws.cell(row=row_num, column=7, value=producto.unidad_de_medida).alignment = alignment_center
+        ws.cell(row=row_num, column=8, value='Activo' if producto.estado else 'Inactivo').alignment = alignment_center
 
-    # Ajustar el ancho de las columnas
-    for col_num in range(1, len(headers) + 1):
+    # Ajustar el ancho de las columnas para que se vean centradas
+    column_widths = [5, 20, 20, 20, 20, 15, 30, 10]  # Ajusta los anchos según sea necesario
+    for col_num, width in enumerate(column_widths, 1):
         column_letter = get_column_letter(col_num)
-        ws.column_dimensions[column_letter].width = 20
-
-    # Añadir la imagen de marca de agua centrada
-    watermark_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
-    if os.path.exists(watermark_path):
-        try:
-            img = Image(watermark_path)
-            
-            # Ajustar el tamaño de la imagen para que no cubra toda la hoja
-            img.width = 500  # Ajusta este valor según sea necesario
-            img.height = 300  # Ajusta este valor según sea necesario
-
-            # Calcular el centro de la hoja (considerando un tamaño promedio)
-            center_col = (ws.max_column + 1) // 2
-            center_row = (ws.max_row + 10) // 2  # Moviendo un poco más hacia abajo
-            center_cell = f"{get_column_letter(center_col)}{center_row}"
-
-            # Colocar la imagen en la celda central
-            ws.add_image(img, center_cell)
-
-        except Exception as e:
-            print(f"Error al agregar la marca de agua: {e}")
+        ws.column_dimensions[column_letter].width = width
 
     # Guardar el archivo en el buffer
     wb.save(buffer)
@@ -254,5 +250,5 @@ def reporte_productos_excel(request):
 
     # Preparar la respuesta HTTP
     response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="Reporte_productos.xlsx"'
+    response['Content-Disposition'] = 'attachment; filename="Reporte_productos_samsamana.xlsx"'
     return response

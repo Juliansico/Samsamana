@@ -4,7 +4,36 @@
 <h2>Añadir Nueva Marca</h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+    
+    <div class="form-group">
+        <label for="{{ form.nombre.id_for_label }}">Nombre:</label>
+        {{ form.nombre }}
+        {% if form.nombre.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.nombre.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.logoTipo.id_for_label }}">Logo Tipo:</label>
+        {{ form.logoTipo }}
+        {% if form.logoTipo.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.logoTipo.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.estado.id_for_label }}">Estado:</label>
+        {{ form.estado }}
+    </div>
+
     <button type="submit" class="btn btn-primary">Guardar Marca</button>
 </form>
 <a href="{% url 'gestionar_marca' %}" class="btn btn-secondary">Volver</a>

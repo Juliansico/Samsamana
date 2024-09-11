@@ -173,57 +173,54 @@ def reporte_presentaciones_pdf(request):
 
 
 def reporte_presentaciones_excel(request):
-    # Crear un archivo Excel en memoria
+    # Crear buffer para el archivo Excel
     buffer = BytesIO()
+
+    # Crear el libro y la hoja de cálculo
     wb = Workbook()
     ws = wb.active
     ws.title = "Reporte de Presentaciones"
 
-    # Definir estilos
+    # Definir estilos para encabezados
     header_font = Font(bold=True, color="FFFFFF")
     header_fill = PatternFill(start_color="25b6e6", end_color="25b6e6", fill_type="solid")
     alignment_center = Alignment(horizontal="center", vertical="center")
 
+    # Añadir logo
+    logo_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path)
+        img.width = 150  # Ajustar tamaño según sea necesario
+        img.height = 75  # Ajustar tamaño según sea necesario
+        ws.add_image(img, 'A1')
+
+    # Añadir título
+    ws.merge_cells('B1:D1')  # Ajusta el rango según el número de columnas
+    title_cell = ws['B1']
+    title_cell.value = "Reporte de Presentaciones - Balneario Samsamana"
+    title_cell.font = Font(bold=True, size=16)
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+
     # Añadir encabezados
     headers = ["ID", "Nombre", "Estado"]
     for col_num, header in enumerate(headers, 1):
-        cell = ws.cell(row=1, column=col_num, value=header)
+        cell = ws.cell(row=2, column=col_num, value=header)
         cell.font = header_font
         cell.fill = header_fill
         cell.alignment = alignment_center
 
     # Añadir datos de presentaciones
     presentaciones = Presentacion.objects.all()
-    for row_num, presentacion in enumerate(presentaciones, 2):
-        ws.cell(row=row_num, column=1, value=presentacion.id)
-        ws.cell(row=row_num, column=2, value=presentacion.nombre)
-        ws.cell(row=row_num, column=3, value='Activo' if presentacion.estado else 'Inactivo')
+    for row_num, presentacion in enumerate(presentaciones, 3):  # Fila inicial para datos es 3
+        ws.cell(row=row_num, column=1, value=presentacion.id).alignment = alignment_center
+        ws.cell(row=row_num, column=2, value=presentacion.nombre).alignment = alignment_center
+        ws.cell(row=row_num, column=3, value='Activo' if presentacion.estado else 'Inactivo').alignment = alignment_center
 
     # Ajustar el ancho de las columnas
-    for col_num in range(1, len(headers) + 1):
+    column_widths = [10, 30, 20]  # Ajusta los anchos según el contenido
+    for col_num, width in enumerate(column_widths, 1):
         column_letter = get_column_letter(col_num)
-        ws.column_dimensions[column_letter].width = 20
-
-    # Añadir la imagen de marca de agua centrada
-    watermark_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
-    if os.path.exists(watermark_path):
-        try:
-            img = Image(watermark_path)
-            
-            # Ajustar el tamaño de la imagen para que no cubra toda la hoja
-            img.width = 500  # Ajusta este valor según sea necesario
-            img.height = 300  # Ajusta este valor según sea necesario
-
-            # Calcular una posición más central para la imagen
-            center_col = (ws.max_column + 1) // 3  # Cambiar a 3 en lugar de 2 para desplazar la imagen a la izquierda
-            center_row = (ws.max_row + 10) // 2    # Aumentar el valor de la fila para bajar la imagen
-            center_cell = f"{get_column_letter(center_col)}{center_row}"
-
-            # Colocar la imagen en la nueva celda calculada
-            ws.add_image(img, center_cell)
-
-        except Exception as e:
-            print("Error al agregar la marca de agua:", e)
+        ws.column_dimensions[column_letter].width = width
 
     # Guardar el archivo en el buffer
     wb.save(buffer)
@@ -232,6 +229,7 @@ def reporte_presentaciones_excel(request):
     # Preparar la respuesta HTTP
     response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename="Reporte_presentaciones.xlsx"'
+    
     return response
 
 

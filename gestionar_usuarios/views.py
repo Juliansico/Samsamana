@@ -192,6 +192,7 @@ def reporte_usuarios_pdf(request):
     response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="Reporte_usuarios.pdf"'
     return response
+
 def reporte_usuarios_excel(request):
     # Crear un archivo Excel en memoria
     buffer = BytesIO()
@@ -204,49 +205,43 @@ def reporte_usuarios_excel(request):
     header_fill = PatternFill(start_color="25b6e6", end_color="25b6e6", fill_type="solid")
     alignment_center = Alignment(horizontal="center", vertical="center")
 
+    # Añadir logo (más pequeño) en la celda A1
+    logo_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path)
+        img.width = 80  # Ajustar tamaño según necesidad
+        img.height = 40
+        ws.add_image(img, 'A1')
+
+    # Añadir título
+    ws.merge_cells('B1:F1')
+    title_cell = ws['B1']
+    title_cell.value = "TABLA USUARIOS - BALNEARIO SAMSAMANA"
+    title_cell.font = Font(bold=True, size=16)
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+
     # Añadir encabezados
     headers = ["ID", "Usuario", "Apellido", "Teléfono", "Estado"]
     for col_num, header in enumerate(headers, 1):
-        cell = ws.cell(row=1, column=col_num, value=header)
+        cell = ws.cell(row=2, column=col_num, value=header)
         cell.font = header_font
         cell.fill = header_fill
         cell.alignment = alignment_center
 
     # Añadir datos de usuarios
     usuarios = Usuario.objects.all()
-    for row_num, usuario in enumerate(usuarios, 2):
-        ws.cell(row=row_num, column=1, value=usuario.id)
-        ws.cell(row=row_num, column=2, value=usuario.username)
-        ws.cell(row=row_num, column=3, value=usuario.apellido)
-        ws.cell(row=row_num, column=4, value=usuario.telefono)
-        ws.cell(row=row_num, column=5, value='Activo' if usuario.estado else 'Inactivo')
+    for row_num, usuario in enumerate(usuarios, 3):
+        ws.cell(row=row_num, column=1, value=usuario.id).alignment = alignment_center
+        ws.cell(row=row_num, column=2, value=usuario.username).alignment = alignment_center
+        ws.cell(row=row_num, column=3, value=usuario.apellido).alignment = alignment_center
+        ws.cell(row=row_num, column=4, value=usuario.telefono).alignment = alignment_center
+        ws.cell(row=row_num, column=5, value='Activo' if usuario.estado else 'Inactivo').alignment = alignment_center
 
     # Ajustar el ancho de las columnas
-    for col_num in range(1, len(headers) + 1):
+    column_widths = [10, 20, 20, 20, 15]  # Ajusta los anchos según sea necesario
+    for col_num, width in enumerate(column_widths, 1):
         column_letter = get_column_letter(col_num)
-        ws.column_dimensions[column_letter].width = 20
-
-    # Añadir la marca de agua centrada
-    watermark_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
-    if os.path.exists(watermark_path):
-        try:
-            img = Image(watermark_path)
-            img.width = 500  # Ajustar tamaño según sea necesario
-            img.height = 300  # Ajustar tamaño según sea necesario
-
-            # Calcular el centro de la hoja
-            max_row = ws.max_row + 5  # Añadir filas adicionales para espacio extra
-            max_col = ws.max_column
-            
-            # Calcular la columna y fila central para colocar la imagen
-            center_col = (max_col + 1) // 2  # Columna central
-            center_row = (max_row + 1) // 2  # Fila central
-            center_cell = f"{get_column_letter(center_col)}{center_row}"
-
-            # Colocar la imagen en la celda central
-            ws.add_image(img, center_cell)
-        except Exception as e:
-            print("Error al agregar la marca de agua:", e)
+        ws.column_dimensions[column_letter].width = width
 
     # Guardar el archivo en el buffer
     wb.save(buffer)
