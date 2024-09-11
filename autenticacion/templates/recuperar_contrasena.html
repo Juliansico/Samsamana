@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Contraseña - Samsamana</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}?v3.0">
+    <link rel="stylesheet" href="{% static 'css/recuperar_contrasena.css' %}?v6.9">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
@@ -16,11 +16,12 @@
             <h2>Recuperar Contraseña</h2>
             <form id="recuperar-form" method="post" action="{% url 'recuperar_contrasena' %}">
                 {% csrf_token %}
-                <div class="group">
+                <div class="input-group">
                     <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" name="email" class="input-email" placeholder="Correo Electrónico" required>
+                    <input type="email" id="email" name="email" placeholder="Correo Electrónico" autocomplete="email" required>
+                    <span id="email-error" class="error-message"></span>
                 </div>
-                <button type="submit" class="btn-login">Enviar</button>
+                <button type="submit" class="btn-login" disabled>Enviar</button>
             </form>
             <div class="additional-links">
                 <a href="{% url 'login' %}">Volver al inicio de sesión</a>
@@ -28,9 +29,6 @@
         </div>
         <div class="login-image">
             <div class="overlay"></div>
-            <img src="{% static 'img/balneario.jpg' %}" alt="Imagen de fondo" class="full-background-image">
-            <div class="image-text">
-            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -38,44 +36,66 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('recuperar-form');
             const emailInput = document.getElementById('email');
-
-            form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Siempre prevenir el envío por defecto
-
+            const emailError = document.getElementById('email-error');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        
+            function validateEmail() {
                 const email = emailInput.value.trim();
-                const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-
-                if (!email) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Campo vacío',
-                        text: 'El campo de correo electrónico no puede estar vacío.',
-                        confirmButtonText: 'Intentar de nuevo'
-                    });
-                    return;
-                }
                 
-                if (!emailPattern.test(email)) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Correo inválido',
-                        text: 'Por favor, ingresa un correo electrónico válido. Debe incluir un signo "@".',
-                        confirmButtonText: 'Intentar de nuevo'
-                    });
-                    return;
+                if (!email) {
+                    emailError.textContent = 'El campo de correo electrónico no puede estar vacío.';
+                    submitButton.disabled = true;
+                    return false;
+                } else if (!emailPattern.test(email)) {
+                    emailError.textContent = 'Por favor, ingresa un correo electrónico válido.';
+                    submitButton.disabled = true;
+                    return false;
+                } else {
+                    emailError.textContent = '';
+                    submitButton.disabled = false;
+                    return true;
                 }
-
-                // Si todo está bien, envía el formulario
-                form.submit();
+            }
+        
+            emailInput.addEventListener('input', validateEmail);
+        
+            form.addEventListener('submit', function(event) {
+                if (!validateEmail()) {
+                    event.preventDefault();
+                } else {
+                    event.preventDefault(); // Prevenir el envío del formulario para mostrar el mensaje de éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Correo enviado',
+                        text: 'Se ha enviado un correo electrónico con instrucciones para recuperar tu contraseña.',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#74ebd5',
+                        iconColor: '#74ebd5',
+                        customClass: {
+                            popup: 'custom-swal-popup',
+                            confirmButton: 'custom-swal-confirm-button'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // Enviar el formulario después de que el usuario confirme
+                        }
+                    });
+                }
             });
         });
-
+        
         {% if form.errors %}
         Swal.fire({
             icon: 'error',
             title: 'Oops...',
             text: 'Hubo un error al enviar el correo electrónico. Por favor, intenta de nuevo.',
-            confirmButtonText: 'Intentar de nuevo'
+            confirmButtonText: 'Intentar de nuevo',
+            confirmButtonColor: '#74ebd5',
+            customClass: {
+                popup: 'custom-swal-popup',
+                confirmButton: 'custom-swal-confirm-button'
+            }
         });
         {% endif %}
     </script>

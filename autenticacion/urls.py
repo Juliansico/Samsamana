@@ -22,7 +22,7 @@ urlpatterns = [
     
     # Restablecimiento de contraseña
     path('reset-password/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), 
-         name='restablecer_contrasena'),
+        name='restablecer_contrasena'),
     
     path('reset-password-complete/', auth_views.PasswordResetCompleteView.as_view(
         template_name='reset_password_complete.html'

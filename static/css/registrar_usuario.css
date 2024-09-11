@@ -15,11 +15,11 @@ body {
     overflow: hidden;
 }
 
-.login-container {
+.registro-container {
     display: flex;
     flex-direction: row;
-    width: 900px;
-    height: 600px;
+    width: 1100px; /* Aumentar el tamaño del contenedor */
+    height: 850px; /* Aumentar la altura del contenedor */
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2);
@@ -27,7 +27,7 @@ body {
     transition: 0.3s;
 }
 
-.login-form {
+.registro-form {
     width: 50%;
     padding: 40px;
     display: flex;
@@ -35,26 +35,23 @@ body {
     justify-content: center;
     align-items: center;
     position: relative;
+    overflow-y: auto; /* Permite el desplazamiento vertical */
+    height: 100%; /* Asegura que el formulario tome toda la altura del contenedor */
 }
 
-.login-form h2 {
+.registro-form h2 {
     color: #333;
     font-size: 28px;
     margin-bottom: 20px;
 }
 
-.logo {
-    width: 300px;
-    margin-bottom: 20px;
-}
-
-.input-group {
+.registro-group {
     position: relative;
     width: 100%;
     margin-bottom: 20px;
 }
 
-.input-group i {
+.registro-group i {
     position: absolute;
     top: 50%;
     left: 10px;
@@ -62,7 +59,7 @@ body {
     color: #999;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="email"], input[type="password"], select {
     width: 100%;
     padding: 12px 50px;
     border-radius: 30px;
@@ -72,13 +69,13 @@ input[type="text"], input[type="password"] {
     background-color: #f9f9f9;
 }
 
-input[type="text"]:focus, input[type="password"]:focus {
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
     border-color: #74ebd5;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(116, 235, 213, 0.5);
 }
 
-.btn-login {
+.registro-btn {
     position: relative;
     width: 100%;
     padding: 12px;
@@ -94,7 +91,7 @@ input[type="text"]:focus, input[type="password"]:focus {
     z-index: 1;
 }
 
-.btn-login:before {
+.registro-btn:before {
     content: '';
     position: absolute;
     width: 300%;
@@ -107,40 +104,40 @@ input[type="text"]:focus, input[type="password"]:focus {
     z-index: 0;
 }
 
-.btn-login:hover:before {
+.registro-btn:hover:before {
     width: 0;
     height: 0;
 }
 
-.btn-login:hover {
+.registro-btn:hover {
     background-color: #00796b;
 }
 
-.additional-links {
+.registro-links {
     margin-top: 10px;
     text-align: center;
 }
 
-.additional-links a {
+.registro-links a {
     color: #74ebd5;
     text-decoration: none;
     transition: color 0.3s;
 }
 
-.additional-links a:hover {
+.registro-links a:hover {
     color: #000000;
 }
 
-.login-image {
+.registro-image {
     position: relative;
     width: 50%;
     height: 100%;
-    background: url('../img/balneario.jpg') no-repeat center center;
+    background: url('../img/Resgistrar.jpg') no-repeat center center;
     background-size: cover; /* Ajusta la imagen para cubrir todo el contenedor */
     border-radius: 0 15px 15px 0;
 }
 
-.login-image:before {
+.registro-image:before {
     content: '';
     position: absolute;
     width: 100%;
@@ -149,8 +146,6 @@ input[type="text"]:focus, input[type="password"]:focus {
     top: 0;
     left: 0;
 }
-
-
 
 .image-text {
     position: absolute;
@@ -162,53 +157,71 @@ input[type="text"]:focus, input[type="password"]:focus {
     z-index: 1;
 }
 
+/* Estilos para la barra de desplazamiento */
+.registro-form::-webkit-scrollbar {
+    width: 12px;
+}
+
+.registro-form::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 10px;
+}
+
+.registro-form::-webkit-scrollbar-thumb {
+    background: #74ebd5;
+    border-radius: 10px;
+}
+
+.registro-form::-webkit-scrollbar-thumb:hover {
+    background: #00796b;
+}
 
 /* Responsividad */
 @media (max-width: 1024px) {
-    .login-container {
+    .registro-container {
         width: 90%;
         height: auto;
         flex-direction: column;
     }
 
-    .login-form, .login-image {
+    .registro-form, .registro-image {
         width: 100%;
         height: auto;
         border-radius: 15px;
     }
 
-    .login-image {
+    .registro-image {
         height: 300px;
         border-radius: 0 0 15px 15px;
     }
 }
 
 @media (max-width: 768px) {
-    input[type="text"], input[type="password"] {
+    input[type="text"], input[type="email"], input[type="password"], select {
         padding: 12px 40px;
     }
 
-    .input-group i {
+    .registro-group i {
         left: 5px;
     }
 
-    .btn-login {
+    .registro-btn {
         font-size: 16px;
         padding: 10px;
     }
 }
 
 @media (max-width: 480px) {
-    .login-container {
+    .registro-container {
         width: 100%;
         height: auto;
     }
 
-    .login-form {
+    .registro-form {
         padding: 20px;
     }
 
-    .login-image {
+    .registro-image {
         height: 200px;
     }
 
@@ -220,7 +233,7 @@ input[type="text"]:focus, input[type="password"]:focus {
         font-size: 24px;
     }
 
-    .btn-login {
+    .registro-btn {
         font-size: 14px;
     }
 }
@@ -262,7 +275,7 @@ input[type="text"]:focus, input[type="password"]:focus {
     color: #000000 !important; 
 }
 
-.additional-links a:hover {
+.registro-links a:hover {
     color: #000000;
 }
 

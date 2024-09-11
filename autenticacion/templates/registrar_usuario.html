@@ -5,14 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Usuario - Samsamana</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}?v5.1">
+    <link rel="stylesheet" href="{% static 'css/registrar_usuario.css' %}?v5.5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
     <div class="registro-container">
         <div class="registro-form">
-            <img src="{% static 'img/Samsamanalogo1PNG.png' %}" alt="Samsamana Logo" class="logo logo-registro">
             <h2>Registrar Usuario</h2>
             <form id="registro-form" method="post" action="{% url 'registrar' %}">
                 {% csrf_token %}
@@ -63,9 +62,8 @@
                 <a href="{% url 'login' %}">Volver al inicio de sesión</a>
             </div>
         </div>
-        <div class="login-image">
+        <div class="registro-image">
             <div class="overlay"></div>
-            <img src="{% static 'img/Resgistrar.jpg' %}" alt="Imagen de fondo" class="full-background-image">
             <div class="image-text">
             </div>
         </div>
@@ -106,3 +104,4 @@
         {% endif %}
     </script>
 </body>
+</html>

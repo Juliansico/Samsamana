@@ -1,0 +1,81 @@
+.dashboard-container {
+    padding: 20px;
+}
+
+.dashboard-title {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.dashboard-stats {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    width: calc(25% - 20px);
+    margin-bottom: 20px;
+}
+
+.stat-card i {
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.stat-card h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.stat-number {
+    font-size: 2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.dashboard-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #0056b3;
+}
+
+.action-button i {
+    margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+    .stat-card {
+        width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-card {
+        width: 100%;
+    }
+}

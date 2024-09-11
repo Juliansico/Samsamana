@@ -108,7 +108,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '3306'
+        'PORT': '3305'
     }
 }
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

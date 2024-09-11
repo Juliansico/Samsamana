@@ -51,20 +51,21 @@ body {
 .input-group {
     position: relative;
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* Acá aumento  el margen para separar el botón */
 }
 
 .input-group i {
     position: absolute;
     top: 50%;
-    left: 10px;
+    left: 15px; /* Esto es para estar dentro del campo */
     transform: translateY(-50%);
     color: #999;
 }
 
-input[type="text"], input[type="password"] {
+input[type="email"] {
     width: 100%;
     padding: 12px 50px;
+    padding-left: 50px; /* Asegura que el texto no se superponga al icono */
     border-radius: 30px;
     border: 1px solid #ccc;
     font-size: 16px;
@@ -72,7 +73,7 @@ input[type="text"], input[type="password"] {
     background-color: #f9f9f9;
 }
 
-input[type="text"]:focus, input[type="password"]:focus {
+input[type="email"]:focus {
     border-color: #74ebd5;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(116, 235, 213, 0.5);
@@ -136,7 +137,7 @@ input[type="text"]:focus, input[type="password"]:focus {
     width: 50%;
     height: 100%;
     background: url('../img/balneario.jpg') no-repeat center center;
-    background-size: cover; /* Ajusta la imagen para cubrir todo el contenedor */
+    background-size: cover;
     border-radius: 0 15px 15px 0;
 }
 
@@ -145,25 +146,11 @@ input[type="text"]:focus, input[type="password"]:focus {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.3); /* Overlay oscuro */
+    background-color: rgba(0, 0, 0, 0.3);
     top: 0;
     left: 0;
 }
 
-
-
-.image-text {
-    position: absolute;
-    bottom: 30px;
-    left: 30px;
-    color: white;
-    font-size: 24px;
-    line-height: 1.2;
-    z-index: 1;
-}
-
-
-/* Responsividad */
 @media (max-width: 1024px) {
     .login-container {
         width: 90%;
@@ -184,12 +171,13 @@ input[type="text"]:focus, input[type="password"]:focus {
 }
 
 @media (max-width: 768px) {
-    input[type="text"], input[type="password"] {
+    input[type="email"] {
         padding: 12px 40px;
+        padding-left: 40px; /* Ajuste para el icono */
     }
 
     .input-group i {
-        left: 5px;
+        left: 10px; /* Ajustado para pantallas más pequeñas */
     }
 
     .btn-login {
@@ -224,56 +212,47 @@ input[type="text"]:focus, input[type="password"]:focus {
         font-size: 14px;
     }
 }
+/* Agregar estos estilos al final de tu archivo CSS existente */
 
-/* Animaciones para los botones */
-@keyframes gradient-move {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-/* SweetAlert2 Custom Styles */
-.swal2-custom-popup {
-    background-color: #f3f3f3 !important;
-    border-radius: 15px !important;
-}
-
-.swal2-custom-title {
-    color: #333 !important;
-    font-size: 24px !important;
-}
-
-.swal2-custom-content {
-    color: #555 !important;
-    font-size: 16px !important;
-}
-
-.swal2-custom-footer a {
-    color: #5dceb9 !important;
-}
-
-.swal2-custom-footer a:hover {
-    color: #000000 !important; 
-}
-
-.additional-links a:hover {
+.error-message {
     color: #000000;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
 }
 
-.swal2-custom-confirm-button {
+.btn-login:disabled {
+    background: linear-gradient(45deg, #ccc, #ddd);
+    cursor: not-allowed;
+}
+
+.btn-login:disabled:before {
+    display: none;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+/* Estilos para SweetAlert2 */
+.custom-swal-popup {
+    border-radius: 15px;
+}
+
+.custom-swal-confirm-button {
     background-color: #74ebd5 !important;
     color: white !important;
     border-radius: 30px !important;
-    padding: 10px 20px !important;
-    font-size: 16px !important;
+    font-weight: bold !important;
+    transition: all 0.3s ease !important;
 }
 
-.swal2-custom-confirm-button:hover {
+.custom-swal-confirm-button:hover {
     background-color: #000000 !important;
+    color: white !important;
+}
+
+/* Actualizar el estilo hover del botón de envío */
+.btn-login:hover {
+    background-color: #000000;
 }
