@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import Proveedor
 from gestionar_usuarios.models import Usuario
+from django.core.exceptions import ValidationError
+import re
 
 class BaseModelForm(forms.ModelForm):
     def clean_estado(self):
@@ -48,11 +50,6 @@ class UsuarioForm(UserCreationForm, BaseModelForm):
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if Usuario.objects.filter(email=email).exists():
-            raise forms.ValidationError("El correo ya está registrado.")
-        return email
 
 class ProveedorForm(BaseModelForm):
     class Meta:
@@ -61,3 +58,26 @@ class ProveedorForm(BaseModelForm):
         widgets = {
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+        
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$', nombre):
+            raise ValidationError("El nombre solo puede contener letras y espacios.")
+        return nombre
+    def clean_direccion(self):
+        direccion = self.cleaned_data.get('direccion')
+        if not direccion:
+            raise ValidationError("La dirección es obligatoria.")
+        return direccion
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+            raise ValidationError("Por favor, ingrese un correo electrónico válido.")
+        return email
+
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get('telefono')
+        if not re.match(r'^\d{10}$', telefono):
+            raise ValidationError("El teléfono debe contener exactamente 10 dígitos.")
+        return telefono

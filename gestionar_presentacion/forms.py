@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import Presentacion
+from django.core.exceptions import ValidationError
+import re
 
 
 
@@ -31,3 +33,9 @@ class PresentacionForm(BaseModelForm):
         widgets = {
             'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$', nombre):
+            raise ValidationError("El nombre solo puede contener letras y espacios.")
+        return nombre
+        
