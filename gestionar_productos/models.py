@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 
 class Producto(models.Model):
     UNIDADES_MEDIDA = [
@@ -21,7 +22,7 @@ class Producto(models.Model):
     
     nombre = models.CharField(max_length=255)
     marca = models.ForeignKey('gestionar_marca.Marca', on_delete=models.CASCADE)
-    presentacion = models.ForeignKey('gestionar_presentacion.Presentacion', on_delete=models.CASCADE)
+    presentacion = models.ForeignKey('gestionar_presentacion.Presentacion', on_delete=models.CASCADE, null=False)
     categoria = models.ForeignKey('gestionar_categoria.Categoria', on_delete=models.CASCADE)
     precio = models.DecimalField(max_digits=50, decimal_places=2, validators=[MinValueValidator(0)])
     unidad_de_medida = models.CharField(max_length=50, choices=UNIDADES_MEDIDA)
@@ -29,3 +30,12 @@ class Producto(models.Model):
     
     def __str__(self):
         return self.nombre
+
+    def clean(self):
+        super().clean()
+        if self.presentacion_id is not None and not self.presentacion.estado:
+            raise ValidationError("No se puede asignar una presentación inactiva a un producto.")
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)

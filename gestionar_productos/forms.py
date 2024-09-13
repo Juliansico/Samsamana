@@ -36,6 +36,9 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from .models import Producto
 from decimal import Decimal
+from gestionar_presentacion.models import Presentacion
+from gestionar_marca.models import Marca
+from gestionar_categoria.models import Categoria
 
 class ProductoForm(forms.ModelForm):
     nombre = forms.CharField(
@@ -61,6 +64,11 @@ class ProductoForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
         self.fields['estado'].widget.attrs.update({'class': 'form-check-input'})
+        
+        # Filtrar solo presentaciones, marcas y categorías activas
+        self.fields['presentacion'].queryset = Presentacion.objects.filter(estado=True)
+        self.fields['marca'].queryset = Marca.objects.filter(estado=True)
+        self.fields['categoria'].queryset = Categoria.objects.filter(estado=True)
 
     def clean_precio(self):
         precio = self.cleaned_data.get('precio')
