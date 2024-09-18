@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block titulo %}Crear Venta{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">Crear una Venta</div>
+    <div class="card-body">
+        <form method="post" id="venta-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <h3>Detalles de la Venta</h3>
+            {{ formset.management_form }}
+            <input type="hidden" name="detalles-TOTAL_FORMS" id="id_form-TOTAL_FORMS" value="{{ formset.total_form_count }}">
+            <input type="hidden" name="detalles-INITIAL_FORMS" id="id_form-INITIAL_FORMS" value="{{ formset.initial_form_count }}">
+            <input type="hidden" name="detalles-MIN_NUM_FORMS" id="id_form-MIN_NUM_FORMS" value="{{ formset.min_num_forms }}">
+            <input type="hidden" name="detalles-MAX_NUM_FORMS" id="id_form-MAX_NUM_FORMS" value="{{ formset.max_num_forms }}">
+
+            <div id="formset-container">
+                {% for form in formset %}
+                    <div class="formset-form">
+                        {{ form.as_p }}
+                        <button type="button" class="btn btn-danger remove-form">Eliminar ítem</button>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-success" id="add-form">Agregar otro ítem</button>
+            <div id="subtotal">Subtotal: $<span id="subtotal-value">0.00</span></div>
+            <input type="submit" value="Crear Venta" class="btn btn-primary">
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('#formset-container');
+    const addButton = document.querySelector('#add-form');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');  // Campo oculto de total de formularios
+    let formCount = parseInt(totalForms.value, 10); // Inicialmente el número de formularios es lo que dice TOTAL_FORMS
+
+    function updateSubtotal() {
+        let subtotal = 0;
+        container.querySelectorAll('.formset-form').forEach(form => {
+            const cantidad = parseFloat(form.querySelector('[name$="-cantidad"]').value) || 0;
+            const precio = parseFloat(form.querySelector('[name$="-precio"]').value) || 0;
+            subtotal += cantidad * precio;
+        });
+        document.getElementById('subtotal-value').textContent = subtotal.toFixed(2);
+    }
+
+    function setupFormEvents(form) {
+        const productoSelect = form.querySelector('[name$="-producto"]');
+        const cantidadInput = form.querySelector('[name$="-cantidad"]');
+        const precioInput = form.querySelector('[name$="-precio"]');
+
+        productoSelect.addEventListener('change', function() {
+            const productoId = this.value;
+            if (productoId) {
+                $.ajax({
+                    url: '/api/producto/' + productoId + '/precio/',
+                    type: 'GET',
+                    success: function(data) {
+                        if (data.precio) {
+                            precioInput.value = data.precio;
+                            updateSubtotal();
+                        }
+                    }
+                });
+            } else {
+                precioInput.value = '0.00';
+                updateSubtotal();
+            }
+        });
+
+        cantidadInput.addEventListener('input', updateSubtotal);
+    }
+
+    addButton.addEventListener('click', function() {
+        const newForm = document.createElement('div');
+        newForm.classList.add('formset-form');
+        
+        // Clonamos el HTML del primer formulario
+        newForm.innerHTML = container.children[0].innerHTML.replace(/detalles-\d+/g, `detalles-${formCount}`);
+        
+        newForm.querySelectorAll('input, select').forEach(input => {
+            input.name = input.name.replace(/detalles-\d+/g, `detalles-${formCount}`);
+            input.id = input.id.replace(/detalles-\d+/g, `detalles-${formCount}`);
+            input.value = ''; // Limpiar el valor
+        });
+
+        container.appendChild(newForm); // Añadir el nuevo formulario al contenedor
+        setupFormEvents(newForm); // Configurar eventos para el nuevo formulario
+        formCount++; // Incrementar el contador de formularios
+        totalForms.value = formCount; // Actualizar el total de formularios en el campo oculto
+        updateSubtotal(); // Actualizar el subtotal
+    });
+
+    container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-form')) {
+            if (container.children.length > 1) {
+                e.target.closest('.formset-form').remove();
+                updateFormIndexes(); // Recalcular los índices de los formularios
+                updateSubtotal(); // Actualizar el subtotal
+            } else {
+                alert('Debe haber al menos un ítem en la venta.');
+            }
+        }
+    });
+
+    function updateFormIndexes() {
+        const forms = container.querySelectorAll('.formset-form');
+        forms.forEach((form, index) => {
+            form.querySelectorAll('input, select').forEach(input => {
+                input.name = input.name.replace(/detalles-\d+/g, `detalles-${index}`);
+                input.id = input.id.replace(/detalles-\d+/g, `detalles-${index}`);
+            });
+        });
+        formCount = forms.length; // Actualizar el contador con la cantidad real de formularios
+        totalForms.value = formCount; // Actualizar el número total de formularios en el formset
+    }
+
+    // Configurar eventos para los formularios iniciales
+    container.querySelectorAll('.formset-form').forEach(setupFormEvents);
+
+    updateSubtotal(); // Inicializar el subtotal
+});
+</script>
+{% endblock %}

@@ -6,8 +6,8 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 from django.contrib import messages
-from .models import Venta, Producto
-from .forms import VentaForm
+from .models import Venta, Producto, DetalleVenta
+from .forms import VentaForm, DetalleVentaForm
 from django.views.decorators.cache import never_cache
 from io import BytesIO
 from django.http import HttpResponse
@@ -19,73 +19,107 @@ from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 import os
 from openpyxl.drawing.image import Image
-@never_cache
+from django.forms import inlineformset_factory
+
 @login_required
-def gestionar_ventas(request):
-    ventas = Venta.objects.all()
-    total_venta_realizada = Venta.objects.aggregate(Sum('cantidad_Venta'))['cantidad_Venta__sum']
-    ventas_activas = Venta.objects.filter(estado=True)
-    ventas_inactivas = Venta.objects.filter(estado=False)
-
-    context = {
-        'ventas': ventas,
-        'total_venta_realizada': total_venta_realizada,
-        'ventas_activas': ventas_activas,
-        'ventas_inactivas': ventas_inactivas,
-    }
-
-    return render(request, 'gestionar_ventas.html', context)
 @never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
+
+
+
+@login_required
 @never_cache
-def editar_venta(request, venta_id):
-    venta = get_object_or_404(Venta, id=venta_id)
+def crear_venta(request):
+    DetalleVentaFormSet = inlineformset_factory(
+        Venta, 
+        DetalleVenta, 
+        form=DetalleVentaForm, 
+        extra=1,  # Puedes cambiar este número si no quieres formularios adicionales por defecto
+        can_delete=True
+    )
+    
+    if request.method == 'POST':
+        form = VentaForm(request.POST)
+        formset = DetalleVentaFormSet(request.POST)
+        
+        if form.is_valid() and formset.is_valid():
+            venta = form.save()
+            formset.instance = venta  # Asociar la venta a los detalles
+            formset.save()
+
+            # Imprimir el número de formularios en el formset
+            print("Número de formularios en el formset:", formset.total_form_count())
+            
+            # Calcular y guardar el valor total
+            valor_total = sum(detalle.subtotal for detalle in venta.detalles.all())
+            venta.valor_total = valor_total
+            venta.save()
+            
+            return redirect('gestionar_ventas')
+        else:
+            # Depuración de errores
+            print(form.errors, formset.errors)  
+    else:
+        form = VentaForm()
+        formset = DetalleVentaFormSet()
+    
+    return render(request, 'crear_venta.html', {'form': form, 'formset': formset})
+
+
+@login_required
+@never_cache
+def gestionar_ventas(request):
+    ventas = Venta.objects.all()
+    return render(request, 'gestionar_ventas.html', {'ventas': ventas})
+
+@login_required
+@never_cache
+def detalle_venta(request, id):
+    venta = get_object_or_404(Venta, id=id)
+    return render(request, 'detalle_venta.html', {'venta': venta})
+
+@login_required
+@never_cache
+def editar_venta(request, id):
+    venta = get_object_or_404(Venta, id=id)
+    DetalleVentaFormSet = inlineformset_factory(Venta, DetalleVenta, form=DetalleVentaForm, extra=1)
+    
     if request.method == 'POST':
         form = VentaForm(request.POST, instance=venta)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Venta actualizada con éxito.')
-            return redirect('gestionar_ventas')
+            venta = form.save(commit=False)
+            formset = DetalleVentaFormSet(request.POST, instance=venta)
+            if formset.is_valid():
+                venta.save()
+                formset.save()
+                # Recalcular y guardar el valor total
+                valor_total = sum(detalle.subtotal for detalle in venta.detalles.all())
+                venta.valor_total = valor_total
+                venta.save()
+                return redirect('gestionar_ventas')
     else:
         form = VentaForm(instance=venta)
-    return render(request, 'editar_venta.html', {'form': form, 'venta': venta})
+        formset = DetalleVentaFormSet(instance=venta)
+    
+    return render(request, 'editar_venta.html', {'form': form, 'formset': formset})
 
-@never_cache
 @login_required
-def consultar_venta(request):
+@never_cache
+def eliminar_venta(request, id):
+    venta = get_object_or_404(Venta, id=id)
     if request.method == 'POST':
-        id_venta = request.POST.get('id_venta')
-        ventas = Venta.objects.filter(id=id_venta)
-        return render(request, 'consultar_venta.html', {'ventas': ventas})
-    return render(request, 'consultar_venta.html')
+        venta.delete()
+        messages.success(request, 'La venta ha sido eliminada exitosamente.')
+        return redirect('gestionar_ventas')
+    return render(request, 'eliminar_venta.html', {'venta': venta})
 
-@never_cache
-@login_required
-def añadir_venta(request):
-    if request.method == 'POST':
-        form = VentaForm(request.POST)
-        if form.is_valid():
-            venta = form.save(commit=False)
-            venta.id_Usuario = request.user
-            venta.save()
-            messages.success(request, 'Venta añadida con éxito.')
-            return redirect('gestionar_ventas')
-    else:
-        form = VentaForm()
-    return render(request, 'añadir_venta.html', {'form': form})
-@never_cache
-@login_required
-def activar_desactivar_venta(request, venta_id):
-    venta = get_object_or_404(Venta, id=venta_id, id_Usuario=request.user)
-    venta.estado = not venta.estado
-    estado = "activada" if venta.estado else "inactivada" 
-    messages.success(request, f'Venta {estado} con éxito.')
-    venta.save()
-    return redirect('gestionar_ventas')
+
+
 
 
 from django.http import JsonResponse
+
 @never_cache
 def obtener_precio_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)

@@ -1,54 +1,44 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block content %}
-<h2>Gestionar Ventas</h2>
+{% block titulo %} Lista de Ventas {% endblock %}
 
-<a href="{% url 'añadir_venta' %}" class="btn btn-primary mb-3">Añadir Venta</a>
-
-<div class="mb-3">
-    <h3>Consultar Venta</h3>
-    <form method="post" action="{% url 'consultar_venta' %}">
-        {% csrf_token %}
-        <div class="input-group">
-            <input type="text" name="id_venta" class="form-control" placeholder="ID de Venta">
-            <button type="submit" class="btn btn-secondary">Buscar</button>
+{% block content %} 
+<div class="card">
+    <div class="card-header">
+        <a href="{% url 'crear_venta' %}" class="btn btn-success">Crear nueva venta</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Ventas</h4>
+        <div class="table-responsive">
+            <table class="table table-primary">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                        <th>Valor Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venta in ventas %}
+                    <tr>
+                        <td>{{ venta.id_venta }}</td>
+                        <td>{{ venta.usuario.username }}</td>
+                        <td>{{ venta.fecha }}</td>
+                        <td>{{ venta.valor_total }}</td>
+                        <td>
+                            <a href="{% url 'detalle_venta' id=venta.id %}" class="btn btn-info">Ver</a>
+                            <a href="{% url 'editar_venta' id=venta.id %}" class="btn btn-warning">Editar</a>
+                            <a href="{% url 'eliminar_venta' id=venta.id %}" class="btn btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <a href="{% url 'reporte_ventas_excel' %}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">Exportar a Excel</a>
+                <a href="{% url 'reporte_ventas_pdf' %}" class="btn btn-primary" style="background-color: #f44336; border-color: #f44336;">Exportar a PDF</a>
+            </table>
         </div>
-    </form>
+    </div>
 </div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Total</th>
-            <th>Fecha</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for venta in ventas %}
-        <tr>
-            <td>{{ venta.id }}</td>
-            <td>{{ venta.nombre_Producto }}</td>
-            <td>{{ venta.precio_Producto }}</td>
-            <td>{{ venta.cantidad_Venta }}</td>
-            <td>{{ venta.total_Venta }}</td>
-            <td>{{ venta.fecha }}</td>
-            <td>{{ venta.estado|yesno:"Activo,Inactivo" }}</td>
-            <td>
-                <a href="{% url 'editar_venta' venta.id %}" class="btn btn-sm btn-primary">Editar</a>
-                <a href="{% url 'activar_desactivar_venta' venta.id %}" class="btn btn-sm btn-secondary">
-                    {% if venta.estado %}Desactivar{% else %}Activar{% endif %}
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-    <a href="{% url 'reporte_ventas_excel' %}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">Exportar a Excel</a>
-    <a href="{% url 'reporte_ventas_pdf' %}" class="btn btn-primary" style="background-color: #f44336; border-color: #f44336;">Exportar a PDF</a>
-</table>
 {% endblock %}

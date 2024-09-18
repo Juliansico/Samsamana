@@ -1,12 +1,25 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block content %}
-<h2>Editar Venta</h2>
+{% block titulo %} Editar venta {% endblock %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Actualizar Venta</button>
-    <a href="{% url 'gestionar_ventas' %}" class="btn btn-secondary mt-3">Volver</a>
-</form>
+{% block content %} 
+<div class="card">
+    <div class="card-header">Editar venta #{{ venta.id_venta }}</div>
+    <div class="card-body">
+        <h4 class="card-title">Editar Datos de la venta</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <h5>Detalles de la venta</h5>
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div class="formset-row">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+            <input type="submit" class="btn btn-success" value="Actualizar venta">
+            <a href="{% url 'gestionar_ventas' %}" class="btn btn-warning">Cancelar</a>
+        </form>
+    </div>
+</div>
 {% endblock %}

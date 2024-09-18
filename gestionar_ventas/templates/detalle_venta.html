@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block titulo %} Detalle de la Venta {% endblock %}
+
+{% block content %} 
+<div class="card">
+    <div class="card-header">Detalle de la Venta #{{ venta.id_venta }}</div>
+    <div class="card-body">
+        <h4 class="card-title">Información de la Venta</h4>
+        <p><strong>Usuario:</strong> {{ venta.usuario.username }}</p>
+        <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
+        <p><strong>Valor Total:</strong> {{ venta.valor_total }}</p>
+        
+        <h5>Detalles de la Venta</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Valor Unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in venta.detalles.all %}
+                <tr>
+                    <td>{{ detalle.producto.nombre }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>{{ detalle.precio }}</td>
+                    <td>{{ detalle.subtotal }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'gestionar_ventas' %}" class="btn btn-primary">Volver a la lista</a>
+    </div>
+</div>
+{% endblock %}

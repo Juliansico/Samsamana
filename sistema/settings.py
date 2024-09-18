@@ -73,8 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',  # Mover al final
-    'django.middleware.cache.FetchFromCacheMiddleware',  # Mantener al final
+    
 ]
 
 ROOT_URLCONF = 'sistema.urls'
@@ -108,7 +107,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '3305'
+        'PORT': '3307'
     }
 }
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -137,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
@@ -171,3 +170,6 @@ EMAIL_HOST_USER = 'samsamanarecuperar@gmail.com'
 EMAIL_HOST_PASSWORD = 'h m h k c r y z z p n q s f c n '
 
 AUTH_USER_MODEL = 'gestionar_usuarios.Usuario'
+
+CSRF_COOKIE_HTTPONLY = False  # Esto debería estar en False para formularios que requieren interacción con CSRF
+CSRF_USE_SESSIONS = False  # Debe estar en False si quieres que el token CSRF se maneje con cookies en lugar de sesiones
