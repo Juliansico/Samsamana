@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block titulo %} Detalle de la Compra {% endblock %}
+
+{% block content %} 
+<div class="card">
+    <div class="card-header">Detalle de la Compra #{{ compra.id_compra }}</div>
+    <div class="card-body">
+        <h4 class="card-title">Información de la Compra</h4>
+        <p><strong>Usuario:</strong> {{ compra.usuario.username }}</p>
+        <p><strong>Fecha:</strong> {{ compra.fecha }}</p>
+        <p><strong>Valor Total:</strong> {{ compra.valor_total }}</p>
+        
+        <h5>Detalles de la Compra</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Proveedor</th>
+                    <th>Cantidad</th>
+                    <th>Valor Unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in compra.detalles.all %}
+                <tr>
+                    <td>{{ detalle.producto.nombre }}</td>
+                    <td>{{ detalle.proveedor.nombre }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>{{ detalle.precio }}</td>
+                    <td>{{ detalle.subtotal }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'gestionar_compras' %}" class="btn btn-primary">Volver a la lista</a>
+    </div>
+</div>
+{% endblock %}

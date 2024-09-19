@@ -20,6 +20,7 @@ from reportlab.lib import colors
 import os
 from openpyxl.drawing.image import Image
 from django.forms import inlineformset_factory
+from django.http import JsonResponse
 
 @login_required
 @never_cache
@@ -118,7 +119,6 @@ def eliminar_venta(request, id):
 
 
 
-from django.http import JsonResponse
 
 @never_cache
 def obtener_precio_producto(request, producto_id):

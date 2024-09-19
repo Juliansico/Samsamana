@@ -6,6 +6,7 @@ from .forms import ProductoForm
 from gestionar_categoria.models import Categoria
 from gestionar_marca.models import Marca
 from gestionar_presentacion.models import Presentacion
+from gestionar_proveedor.models import Proveedor
 import logging
 import os
 from reportlab.lib.utils import ImageReader
@@ -74,6 +75,7 @@ def filtrar_productos(request):
     categoria_id = request.GET.get('categoria', '')
     marca_id = request.GET.get('marca', '')
     presentacion_id = request.GET.get('presentacion', '')
+    proveedor_id = request.GET.get('proveedor', '')
 
     productos = Producto.objects.all()
 
@@ -94,16 +96,19 @@ def filtrar_productos(request):
         productos = productos.filter(marca_id=marca_id)
     if presentacion_id:
         productos = productos.filter(presentacion_id=presentacion_id)
-    
+    if proveedor_id:
+        productos = productos.filter(proveedor_id=proveedor_id)
 
     context = {
         'productos': productos,
         'categorias': Categoria.objects.all(),
         'marcas': Marca.objects.all(),
         'presentaciones': Presentacion.objects.all(),
+        'proveedor': Proveedor.objects.all(),
     }
 
     return render(request, 'gestionar_productos.html', context)
+
 @never_cache
 @login_required
 def activar_inactivar_producto(request, producto_id):

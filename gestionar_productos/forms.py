@@ -39,6 +39,7 @@ from decimal import Decimal
 from gestionar_presentacion.models import Presentacion
 from gestionar_marca.models import Marca
 from gestionar_categoria.models import Categoria
+from gestionar_proveedor.models import Proveedor
 
 class ProductoForm(forms.ModelForm):
     nombre = forms.CharField(
@@ -57,7 +58,7 @@ class ProductoForm(forms.ModelForm):
 
     class Meta:
         model = Producto
-        fields = ['nombre', 'marca', 'presentacion', 'categoria', 'precio', 'unidad_de_medida', 'estado']
+        fields = ['nombre', 'marca', 'presentacion', 'proveedor', 'categoria', 'precio', 'unidad_de_medida', 'estado']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -69,6 +70,7 @@ class ProductoForm(forms.ModelForm):
         self.fields['presentacion'].queryset = Presentacion.objects.filter(estado=True)
         self.fields['marca'].queryset = Marca.objects.filter(estado=True)
         self.fields['categoria'].queryset = Categoria.objects.filter(estado=True)
+        self.fields['proveedor'].queryset = Proveedor.objects.filter(estado=True)
 
     def clean_precio(self):
         precio = self.cleaned_data.get('precio')

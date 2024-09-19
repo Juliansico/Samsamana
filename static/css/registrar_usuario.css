@@ -19,7 +19,7 @@ body {
     display: flex;
     flex-direction: row;
     width: 1100px; /* Aumentar el tamaño del contenedor */
-    height: 850px; /* Aumentar la altura del contenedor */
+    height: 800px; /* Aumentar la altura del contenedor */
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2);
@@ -53,7 +53,7 @@ body {
 
 .registro-group i {
     position: absolute;
-    top: 50%;
+    top: 63%;
     left: 10px;
     transform: translateY(-50%);
     color: #999;

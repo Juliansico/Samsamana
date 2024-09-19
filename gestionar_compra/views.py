@@ -2,8 +2,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import  Compra
-from .forms import  CompraForm
+from .models import  Compra, DetalleCompra, Producto, Proveedor
+from .forms import  CompraForm, DetalleCompraForm
 from openpyxl.drawing.image import Image
 from reportlab.lib.utils import ImageReader
 from django.views.decorators.cache import never_cache
@@ -20,78 +20,117 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 import os
+from django.forms import inlineformset_factory
+from django.http import JsonResponse
 # Create your views here.
 @never_cache
 def dashboard(request):
     return render(request, 'dashboard.html')
-@never_cache
-@login_required
-def gestionar_compra(request):
-    compras = Compra.objects.all()
-    return render(request, 'gestionar_compra.html', {'compras': compras})
 
-
-@never_cache
 @login_required
-def añadir_compra(request):
+@never_cache
+def crear_compra(request):
+    DetalleCompraFormSet = inlineformset_factory(
+        Compra, 
+        DetalleCompra, 
+        form=DetalleCompraForm, 
+        extra=1,  # Puedes cambiar este número si no quieres formularios adicionales por defecto
+        can_delete=True
+    )
+    
     if request.method == 'POST':
         form = CompraForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Compra añadida con éxito.')
-            return redirect('gestionar_compra')
+        formset = DetalleCompraFormSet(request.POST)
+        
+        if form.is_valid() and formset.is_valid():
+            compra = form.save()
+            formset.instance = compra # Asociar la venta a los detalles
+            formset.save()
+
+            # Imprimir el número de formularios en el formset
+            print("Número de formularios en el formset:", formset.total_form_count())
+            
+            # Calcular y guardar el valor total
+            valor_total = sum(detalle.subtotal for detalle in compra.detalles.all())
+            compra.valor_total = valor_total
+            compra.save()
+            
+            return redirect('gestionar_compras')
+        else:
+            # Depuración de errores
+            print(form.errors, formset.errors)  
     else:
         form = CompraForm()
-    return render(request, 'añadir_compra.html', {'form': form})
+        formset = DetalleCompraFormSet()
+    
+    return render(request, 'crear_compra.html', {'form': form, 'formset': formset})
 
-@never_cache
 
 @login_required
-def editar_compra(request, compra_id):
-    compra = get_object_or_404(Compra, id=compra_id)
+@never_cache
+def gestionar_compras(request):
+    compras = Compra.objects.all()
+    return render(request, 'gestionar_compras.html', {'compras': compras})
+
+@login_required
+@never_cache
+def detalle_compra(request, id):
+    compra = get_object_or_404(Compra, id=id)
+    return render(request, 'detalle_compra.html', {'Compra': compra})
+
+@login_required
+@never_cache
+def editar_compra(request, id):
+    compra = get_object_or_404(Compra, id=id)
+    DetalleCompraFormSet = inlineformset_factory(Compra, DetalleCompra, form=DetalleCompraForm, extra=1)
+    
     if request.method == 'POST':
         form = CompraForm(request.POST, instance=compra)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Compra actualizada con éxito.')
-            return redirect('gestionar_compra')
+            compra = form.save(commit=False)
+            formset = DetalleCompraFormSet(request.POST, instance=compra)
+            if formset.is_valid():
+                compra.save()
+                formset.save()
+                # Recalcular y guardar el valor total
+                valor_total = sum(detalle.subtotal for detalle in compra.detalles.all())
+                compra.valor_total = valor_total
+                compra.save()
+                return redirect('gestionar_compras')
     else:
         form = CompraForm(instance=compra)
-    return render(request, 'editar_compra.html', {'form': form, 'compra': compra})
-
-
+        formset = DetalleCompraFormSet(instance=compra)
+    
+    return render(request, 'editar_compra.html', {'form': form, 'formset': formset})
 
 @login_required
-def activar_inactivar_compra(request, compra_id):
-    compra = get_object_or_404(Compra, id=compra_id)
-    compra.estado = not compra.estado
-    compra.save()
-    messages.success(request, f'Compra {compra.estado} con éxito.')
-    return redirect('gestionar_compra')
+@never_cache
+def eliminar_compra(request, id):
+    compra = get_object_or_404(Compra, id=id)
+    if request.method == 'POST':
+        compra.delete()
+        messages.success(request, 'La compra ha sido eliminada exitosamente.')
+        return redirect('gestionar_compras')
+    return render(request, 'eliminar_compra.html', {'compra': compra})
+
+
+
+
+def obtener_proveedor(request, producto_id):
+    try:
+        producto = Producto.objects.get(id=producto_id)
+        proveedor = producto.proveedor  # Asegúrate de que 'proveedor' es el campo correcto
+        return JsonResponse({'proveedor': proveedor})
+    except Producto.DoesNotExist:
+        return JsonResponse({'proveedor': ''}, status=404)
+
+
 
 
 @never_cache
-@login_required
-def consultar_compra(request):
-    if request.method == 'POST':
-        id_compra = request.POST.get('id_compra')
-        fecha_compra = request.POST.get('fecha_compra')
-        proveedor = request.POST.get('proveedor')
-        estado = request.POST.get('estado')
-        
-        compras = Compra.objects.all()
-        if id_compra:
-            compras = compras.filter(id=id_compra)
-        if fecha_compra:
-            compras = compras.filter(fechaCompra__date=fecha_compra)
-        if proveedor:
-            compras = compras.filter(proveedorId__nombre__icontains=proveedor)
-        if estado:
-            compras = compras.filter(estadoCompra=estado)
-        
-        return render(request, 'consultar_compra.html', {'compras': compras})
-    return render(request, 'consultar_compra.html')
-
+def obtener_precio_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    return JsonResponse({'precio': producto.precio})
 def reporte_compras_pdf(request):
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=letter)

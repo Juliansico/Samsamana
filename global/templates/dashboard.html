@@ -1,6 +1,228 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?{% now 'U' %}">
+{% endblock %}
 
 {% block content %}
-<h2>Dashboard</h2>
-<p>Bienvenido al sistema de gestión de inventario y punto de venta.</p>
+<div class="dashboard-container">
+    <h1 class="dashboard-title">
+        <i class="fas fa-umbrella-beach"></i> Balneario Samsamana - Estadísticas
+    </h1>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-box stat-icon"></i>
+            <h3 class="stat-title">Productos en Stock</h3>
+            <div class="stat-value">1,234</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-dollar-sign stat-icon"></i>
+            <h3 class="stat-title">Ventas del Día</h3>
+            <div class="stat-value">$2,500</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-users stat-icon"></i>
+            <h3 class="stat-title">Visitantes Hoy</h3>
+            <div class="stat-value">350</div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-exclamation-triangle stat-icon"></i>
+            <h3 class="stat-title">Productos Bajos</h3>
+            <div class="stat-value">15</div>
+        </div>
+    </div>
+    
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3 class="chart-title">Ventas Semanales</h3>
+            <canvas id="salesChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3 class="chart-title">Productos Más Vendidos</h3>
+            <canvas id="topProductsChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3 class="chart-title">Visitantes por Hora</h3>
+            <canvas id="visitorsByHourChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3 class="chart-title">Ingresos vs Gastos</h3>
+            <canvas id="incomeExpensesChart"></canvas>
+        </div>
+    </div>
+
+    <div class="weather-widget">
+        <h3 class="weather-title">Clima Actual</h3>
+        <div class="weather-info">
+            <i class="fas fa-sun weather-icon"></i>
+            <span class="weather-temp">28°C</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Configuración común para todos los gráficos
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    boxWidth: 10,
+                    font: {
+                        size: 12
+                    }
+                }
+            },
+            title: {
+                display: true,
+                font: {
+                    size: 16
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    maxRotation: 0,
+                    minRotation: 0,
+                    autoSkip: true,
+                    maxTicksLimit: 8,
+                    font: {
+                        size: 10
+                    }
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    font: {
+                        size: 10
+                    }
+                }
+            }
+        }
+    };
+
+    // Ventas Semanales
+    var salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+            datasets: [{
+                label: 'Ventas ($)',
+                data: [1200, 1900, 1500, 2000, 2400, 2800, 2200],
+                borderColor: '#00a0b0',
+                backgroundColor: 'rgba(0, 160, 176, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                title: {
+                    ...commonOptions.plugins.title,
+                    text: 'Ventas Semanales'
+                }
+            }
+        }
+    });
+
+    // Productos Más Vendidos
+    var topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+    new Chart(topProductsCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Toallas', 'Bebidas', 'Snacks', 'Protector Solar', 'Souvenirs'],
+            datasets: [{
+                label: 'Unidades Vendidas',
+                data: [300, 250, 200, 150, 100],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)'
+                ]
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                title: {
+                    ...commonOptions.plugins.title,
+                    text: 'Productos Más Vendidos'
+                }
+            }
+        }
+    });
+
+    // Visitantes por Hora
+    var visitorsByHourCtx = document.getElementById('visitorsByHourChart').getContext('2d');
+    new Chart(visitorsByHourCtx, {
+        type: 'line',
+        data: {
+            labels: ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+            datasets: [{
+                label: 'Visitantes',
+                data: [20, 40, 60, 80, 100, 90, 70, 50, 30, 10],
+                borderColor: '#6a4a3c',
+                backgroundColor: 'rgba(106, 74, 60, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                title: {
+                    ...commonOptions.plugins.title,
+                    text: 'Visitantes por Hora'
+                }
+            }
+        }
+    });
+
+    // Ingresos vs Gastos
+    var incomeExpensesCtx = document.getElementById('incomeExpensesChart').getContext('2d');
+    new Chart(incomeExpensesCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Ingresos',
+                data: [12000, 19000, 15000, 20000, 24000, 28000],
+                backgroundColor: 'rgba(0, 160, 176, 0.7)'
+            }, {
+                label: 'Gastos',
+                data: [10000, 15000, 13000, 16000, 19000, 22000],
+                backgroundColor: 'rgba(255, 99, 132, 0.7)'
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                title: {
+                    ...commonOptions.plugins.title,
+                    text: 'Ingresos vs Gastos'
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block titulo %} Lista de Compras {% endblock %}
+
+{% block content %} 
+<div class="card">
+    <div class="card-header">
+        <a href="{% url 'crear_compra' %}" class="btn btn-success">Crear nueva Compra</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Compras</h4>
+        <div class="table-responsive">
+            <table class="table table-primary">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                        <th>Valor Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for compra in compras %}
+                    <tr>
+                        <td>{{ compra.id_compra }}</td>
+                        <td>{{ compra.usuario.username }}</td>
+                        <td>{{ compra.fecha }}</td>
+                        <td>{{ compra.total_compra }}</td>
+                        <td>
+                            <a href="{% url 'detalle_compra' id=compra.id %}" class="btn btn-info">Ver</a>
+                            <a href="{% url 'editar_compra' id=compra.id %}" class="btn btn-warning">Editar</a>
+                            <a href="{% url 'eliminar_compra' id=compra.id %}" class="btn btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <a href="{% url 'reporte_compras_excel' %}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">Exportar a Excel</a>
+                <a href="{% url 'reporte_compras_pdf' %}" class="btn btn-primary" style="background-color: #f44336; border-color: #f44336;">Exportar a PDF</a>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

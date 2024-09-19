@@ -1,11 +1,25 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block content %}
-<h2>Editar Compra</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Actualizar Compra</button>
-</form>
-<a href="{% url 'gestionar_compra' %}" class="btn btn-secondary">Volver</a>
+{% block titulo %} Editar compra {% endblock %}
+
+{% block content %} 
+<div class="card">
+    <div class="card-header">Editar compra #{{ compra.id_compra }}</div>
+    <div class="card-body">
+        <h4 class="card-title">Editar Datos de la compra</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <h5>Detalles de la compra</h5>
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div class="formset-row">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+            <input type="submit" class="btn btn-success" value="Actualizar compra">
+            <a href="{% url 'gestionar_compras' %}" class="btn btn-warning">Cancelar</a>
+        </form>
+    </div>
+</div>
 {% endblock %}

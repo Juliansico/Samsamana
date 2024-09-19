@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Usuario - Samsamana</title>
-    <link rel="stylesheet" href="{% static 'css/registrar_usuario.css' %}?v5.5">
+    <link rel="stylesheet" href="{% static 'css/registrar_usuario.css' %}?v={{ timestamp }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
@@ -27,11 +27,6 @@
                     {{ form.apellido }} 
                 </div>
                 <div class="registro-group">
-                    <i class="fas fa-envelope"></i>
-                    <span>Correo electrónico</span>
-                    {{ form.email }}
-                </div>
-                <div class="registro-group">
                     <i class="fas fa-id-card"></i>
                     <span>Tipo de documento</span>
                     {{ form.tipo_documento }}   
@@ -40,6 +35,11 @@
                     <i class="fas fa-id-card"></i>
                     <span>Documento</span>
                     {{ form.documento }}
+                </div>
+                <div class="registro-group">
+                    <i class="fas fa-envelope"></i>
+                    <span>Correo electrónico</span>
+                    {{ form.email }}
                 </div>
                 <div class="registro-group">
                     <i class="fas fa-phone"></i>
@@ -70,38 +70,203 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('registro-form');
-
-            form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Siempre prevenir el envío por defecto
-
-                const password1 = document.getElementById('id_password1').value.trim();
-                const password2 = document.getElementById('id_password2').value.trim();
-
-                if (password1 !== password2) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Contraseñas no coinciden',
-                        text: 'Las contraseñas ingresadas no coinciden. Por favor, intenta de nuevo.',
-                        confirmButtonText: 'Intentar de nuevo'
-                    });
-                    return;
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('registro-form');
+                const submitButton = form.querySelector('button[type="submit"]');
+            
+                // Obtener todos los campos del formulario
+                const usernameInput = document.getElementById('id_username');
+                const apellidoInput = document.getElementById('id_apellido');
+                const emailInput = document.getElementById('id_email');
+                const tipoDocumentoInput = document.getElementById('id_tipo_documento');
+                const documentoInput = document.getElementById('id_documento');
+                const telefonoInput = document.getElementById('id_telefono');
+                const password1Input = document.getElementById('id_password1');
+                const password2Input = document.getElementById('id_password2');
+            
+                // Objeto para almacenar los estados de validación
+                const validationStates = {
+                    username: false,
+                    apellido: false,
+                    email: false,
+                    tipoDocumento: false,
+                    documento: false,
+                    telefono: false,
+                    password1: false,
+                    password2: false
+                };
+            
+                // Función para actualizar el estado del botón de envío
+                function updateSubmitButton() {
+                    submitButton.disabled = !Object.values(validationStates).every(state => state);
                 }
-
-                // Si todo está bien, envía el formulario
-                form.submit();
-            });
-        });
-
-        {% if form.errors %}
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Hubo un error al registrar el usuario. Por favor, intenta de nuevo.',
-            confirmButtonText: 'Intentar de nuevo'
-        });
-        {% endif %}
-    </script>
+            
+                // Función para crear y mostrar mensajes de error
+                function showError(input, message) {
+                    let errorSpan = input.nextElementSibling;
+                    if (!errorSpan || !errorSpan.classList.contains('error-message')) {
+                        errorSpan = document.createElement('span');
+                        errorSpan.classList.add('error-message');
+                        input.parentNode.insertBefore(errorSpan, input.nextSibling);
+                    }
+                    errorSpan.textContent = message;
+                }
+            
+                // Función para limpiar mensajes de error
+                function clearError(input) {
+                    const errorSpan = input.nextElementSibling;
+                    if (errorSpan && errorSpan.classList.contains('error-message')) {
+                        errorSpan.textContent = '';
+                    }
+                }
+            
+                // Validación para el nombre de usuario
+                usernameInput.addEventListener('input', function() {
+                    const username = this.value.trim();
+                    if (username.length < 3) {
+                        showError(this, 'El nombre de usuario debe tener al menos 3 caracteres.');
+                        validationStates.username = false;
+                    } else {
+                        clearError(this);
+                        validationStates.username = true;
+                    }
+                    updateSubmitButton();
+                });
+            
+                // Validación para el apellido
+                apellidoInput.addEventListener('input', function() {
+                    const apellido = this.value.trim();
+                    if (apellido.length < 2) {
+                        showError(this, 'El apellido debe tener al menos 2 caracteres.');
+                        validationStates.apellido = false;
+                    } else {
+                        clearError(this);
+                        validationStates.apellido = true;
+                    }
+                    updateSubmitButton();
+                });
+            
+                // Validación para el correo electrónico
+                emailInput.addEventListener('input', function() {
+                    const email = this.value.trim();
+                    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                    if (!emailPattern.test(email)) {
+                        showError(this, 'Por favor, ingresa un correo electrónico válido.');
+                        validationStates.email = false;
+                    } else {
+                        clearError(this);
+                        validationStates.email = true;
+                    }
+                    updateSubmitButton();
+                });
+            
+                // Validación para el tipo de documento
+                tipoDocumentoInput.addEventListener('change', function() {
+                    if (this.value === '') {
+                        showError(this, 'Por favor, selecciona un tipo de documento.');
+                        validationStates.tipoDocumento = false;
+                    } else {
+                        clearError(this);
+                        validationStates.tipoDocumento = true;
+                    }
+                    updateSubmitButton();
+                });
+            
+                // Validación para el número de documento
+                documentoInput.addEventListener('input', function() {
+                    const documento = this.value.trim();
+                    if (documento.length < 5) {
+                        showError(this, 'El número de documento debe tener al menos 5 caracteres.');
+                        validationStates.documento = false;
+                    } else {
+                        clearError(this);
+                        validationStates.documento = true;
+                    }
+                    updateSubmitButton();
+                });
+            
+                // Validación para el número de teléfono
+                telefonoInput.addEventListener('input', function() {
+                    const telefono = this.value.trim();
+                    const telefonoPattern = /^\d{10}$/;
+                    if (!telefonoPattern.test(telefono)) {
+                        showError(this, 'Por favor, ingresa un número de teléfono válido de 10 dígitos.');
+                        validationStates.telefono = false;
+                    } else {
+                        clearError(this);
+                        validationStates.telefono = true;
+                    }
+                    updateSubmitButton();
+                });
+            
+                // Validación para la contraseña
+                password1Input.addEventListener('input', function() {
+                    const password = this.value.trim();
+                    if (password.length < 8) {
+                        showError(this, 'La contraseña debe tener al menos 8 caracteres.');
+                        validationStates.password1 = false;
+                    } else {
+                        clearError(this);
+                        validationStates.password1 = true;
+                    }
+                    updateSubmitButton();
+                });
+            
+                // Validación para confirmar contraseña
+                password2Input.addEventListener('input', function() {
+                    const password1 = password1Input.value.trim();
+                    const password2 = this.value.trim();
+                    if (password1 !== password2) {
+                        showError(this, 'Las contraseñas no coinciden.');
+                        validationStates.password2 = false;
+                    } else {
+                        clearError(this);
+                        validationStates.password2 = true;
+                    }
+                    updateSubmitButton();
+                });
+            
+                // Validación final al enviar el formulario
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+            
+                    // Verificar si todos los campos están validados
+                    if (Object.values(validationStates).every(state => state)) {
+                        // Si todo está validado, mostrar un mensaje de éxito
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registro exitoso',
+                            text: 'Tu cuenta ha sido creada correctamente.',
+                            confirmButtonText: 'Continuar',
+                            confirmButtonColor: '#74ebd5',
+                            iconColor: '#74ebd5',
+                            customClass: {
+                                popup: 'custom-swal-popup',
+                                confirmButton: 'custom-swal-confirm-button'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit(); // Enviar el formulario después de que el usuario confirme
+                            }
+                        });
+                    } else {
+                        // Si hay campos no validados, mostrar un mensaje de error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error en el formulario',
+                            text: 'Por favor, completa correctamente todos los campos del formulario.',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#74ebd5',
+                            customClass: {
+                                popup: 'custom-swal-popup',
+                                confirmButton: 'custom-swal-confirm-button'
+                            }
+                        });
+                    }
+                });
+            });       
+        </script>
 </body>
 </html>
