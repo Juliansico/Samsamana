@@ -5,20 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperación de Contraseña - Samsamana</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}?v1.9">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}?v2.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="login-container">
         <div class="login-form">
             <img src="{% static 'img/Samsamanalogo1PNG.png' %}" alt="Samsamana Logo" class="logo">
-            <h2>Recuperación de Contraseña</h2>
-            <p>Hemos enviado un correo con un enlace para recuperar tu contraseña a la dirección proporcionada. Por favor, revisa tu bandeja de entrada.</p>
-            <p><a href="{% url 'login' %}">Volver al inicio de sesión</a></p>
+            <h2>¡Correo enviado!</h2>
+            <p>Ahora ya puedes reestablecer tu contraseña, resvisa tu bandeja en el correo ingresado.</p>
+            <div style="margin-top: 30px;">
+                <p><a href="{% url 'login' %}">Volver al inicio de sesión</a></p>
+            </div>
+            
         </div>
         <div class="login-image">
             <div class="overlay"></div>
-            <img src="{% static 'img/balneario.jpg' %}" alt="Imagen de fondo" class="full-background-image">
+            <img src="{% static 'static\img\fondo.jpeg' %}" alt="Imagen de fondo" class="full-background-image">
             <div class="image-text">
             </div>
         </div>

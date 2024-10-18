@@ -1,0 +1,98 @@
+/* Contenedor principal */
+.editar-presentacion-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+.titulo {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Formularios */
+.editar-form .form-group {
+    margin-bottom: 15px;
+}
+
+.editar-form label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+.editar-form input, .editar-form select, .editar-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.editar-form input:focus, .editar-form select:focus, .editar-form textarea:focus {
+    border-color: #5c8df6;
+    outline: none;
+}
+
+/* Botones */
+.botones {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.btn-guardar {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+.btn-guardar:hover {
+    background-color: #45a049;
+}
+
+.btn-volver {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.btn-volver:hover {
+    background-color: #d32f2f;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+    .editar-presentacion-container {
+        padding: 15px;
+    }
+
+    .botones {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

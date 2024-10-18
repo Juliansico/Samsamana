@@ -1,15 +1,28 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block titulo %} Detalle de la Compra {% endblock %}
-
+{% block extra_css %}
+     <link rel="stylesheet" href="{% static 'css/detalle_compra.css' %}?V1.5">
+{% endblock %}
 {% block content %} 
 <div class="card">
-    <div class="card-header">Detalle de la Compra #{{ compra.id_compra }}</div>
+    <div class="card-header">
+        <h4 class="card-title">Detalle de la Compra #{{ compra.id }}</h4>
+    </div>
     <div class="card-body">
-        <h4 class="card-title">Información de la Compra</h4>
-        <p><strong>Usuario:</strong> {{ compra.usuario.username }}</p>
-        <p><strong>Fecha:</strong> {{ compra.fecha }}</p>
-        <p><strong>Valor Total:</strong> {{ compra.valor_total }}</p>
+        <a href="{% url 'exportar_detalle_compra_pdf' compra.id %}" class="btn btn-export btn-primary">
+            PDF
+        </a>
+        <a href="{% url 'exportar_detalle_compra_excel' compra.id %}" class="btn btn-export btn-success">
+            EXCEL
+        </a>
+        
+        <div class="compra-info">
+            <p><strong>Usuario:</strong> {{ compra.usuario.username }}</p>
+            <p><strong>Fecha:</strong> {{ compra.fecha }}</p>
+            <p><strong>Valor Total:</strong> {{ compra.total_compra }}</p>
+        </div>
         
         <h5>Detalles de la Compra</h5>
         <table class="table">

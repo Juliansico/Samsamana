@@ -1,15 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import Group
 from .models import Usuario
 
 class UsuarioForm(UserCreationForm):
-    ROL_CHOICES = [
-        ('administrador', 'Administrador'),
-        ('empleado', 'Empleado'),
-    ]
-    
-    rol_usuario = forms.ChoiceField(choices=ROL_CHOICES, label="Rol de usuario", required=True)
+
     tipo_documento = forms.ChoiceField(
         choices=Usuario.TIPO_DOCUMENTO_CHOICES,
         label="Tipo de documento",
@@ -28,17 +22,17 @@ class UsuarioForm(UserCreationForm):
     password1 = forms.CharField(
         label="Contraseña",
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        required=True
+        required=False  # Cambiado a False para que no sea requerido
     )
     password2 = forms.CharField(
         label="Confirmar contraseña",
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        required=True
+        required=False  # Cambiado a False para que no sea requerido
     )
 
     class Meta:
         model = Usuario
-        fields = ['username', 'apellido', 'tipo_documento', 'documento', 'telefono', 'email', 'password1', 'password2', 'rol_usuario', 'estado']
+        fields = ['username', 'apellido', 'tipo_documento', 'documento', 'telefono', 'email', 'password1', 'password2', 'estado']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control'}),
@@ -52,37 +46,34 @@ class UsuarioForm(UserCreationForm):
             self.fields[field].widget.attrs.update({'class': 'form-control mb-3'})
         self.fields['estado'].widget.attrs.update({'class': 'form-check-input'})
         self.fields['tipo_documento'].widget.attrs.update({'class': 'form-select mb-3'})
-        self.fields['rol_usuario'].widget.attrs.update({'class': 'form-select mb-3'})
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
+        usuario_id = self.instance.id  # Obtener el ID del usuario actual
+        if Usuario.objects.filter(username=username).exclude(id=usuario_id).exists():
+            raise forms.ValidationError("El nombre de usuario ya está en uso.")
         if not username.replace(' ', '').isalpha():
             raise forms.ValidationError("El nombre solo debe contener letras.")
         return username
 
-    def clean_apellido(self):
-        apellido = self.cleaned_data.get('apellido')
-        if not apellido.replace(' ', '').isalpha():
-            raise forms.ValidationError("El apellido solo debe contener letras.")
-        return apellido
-
-    def clean_documento(self):
-        documento = self.cleaned_data.get('documento')
-        if not documento.isdigit() or len(documento) > 10:
-            raise forms.ValidationError("El documento debe contener solo números y tener máximo 10 dígitos.")
-        return documento
-
-    def clean_telefono(self):
-        telefono = self.cleaned_data.get('telefono')
-        if not telefono.isdigit() or len(telefono) > 10:
-            raise forms.ValidationError("El teléfono debe contener solo números y tener máximo 10 dígitos.")
-        return telefono
-
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if Usuario.objects.filter(email=email).exists():
+        usuario_id = self.instance.id  # Obtener el ID del usuario actual
+        if Usuario.objects.filter(email=email).exclude(id=usuario_id).exists():
             raise forms.ValidationError("El correo ya está registrado.")
         return email
+
+    def clean_password1(self):
+        password1 = self.cleaned_data.get("password1")
+        if password1 == '':
+            return self.instance.password  # Retornar la contraseña existente si no hay nueva
+        return password1
+
+    def clean_password2(self):
+        password2 = self.cleaned_data.get("password2")
+        if password2 == '':
+            return self.instance.password  # Retornar la contraseña existente si no hay nueva
+        return password2
 
     def clean(self):
         cleaned_data = super().clean()
@@ -103,7 +94,5 @@ class UsuarioForm(UserCreationForm):
         usuario.is_staff = False
         if commit:
             usuario.save()
-            rol_usuario = self.cleaned_data.get('rol_usuario')
-            group = Group.objects.get(name=rol_usuario)
-            usuario.groups.add(group)
+            
         return usuario

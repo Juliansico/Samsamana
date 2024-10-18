@@ -1,0 +1,35 @@
+{% load static %} <!-- Carga la biblioteca de archivos estáticos -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Políticas de Términos y Condiciones</title>
+    <link rel="stylesheet" href="{% static 'css/politicas.css' %}?v2.1"> <!-- Vincula el archivo CSS específico -->
+</head>
+<body>
+    <div class="politicas-container">
+        <h1>Políticas de Términos y Condiciones</h1>
+        <p>Bienvenido a Samsamana. Al usar nuestros servicios, aceptas los siguientes términos:</p>
+        
+        <h2>1. Aceptación de Términos</h2>
+        <p>Al registrarte y utilizar nuestros servicios, aceptas cumplir con estos términos y condiciones.</p>
+        
+        <h2>2. Uso de Datos Personales</h2>
+        <p>Respetamos tu privacidad y nos comprometemos a proteger tus datos personales. Consulta nuestra Política de Datos Personales para más información.</p>
+        
+        <h2>3. Modificaciones a los Términos</h2>
+        <p>Nos reservamos el derecho a modificar estos términos en cualquier momento. Te notificaremos sobre cambios significativos.</p>
+        
+        <h2>4. Contacto</h2>
+        <p>Si tienes preguntas sobre estos términos, contáctanos a través de nuestro soporte.</p>
+
+        <footer>
+            <p>&copy; 2024 Samsamana. Todos los derechos reservados.</p>
+            
+            <p>Consulta nuestros <a href="{% url 'terminos_condiciones' %}">Términos y Condiciones</a> para más información.</p>
+
+        </footer>
+    </div>
+</body>
+</html>

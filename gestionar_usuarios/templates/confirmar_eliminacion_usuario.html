@@ -7,7 +7,7 @@
 
 <form method="post">
     {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Eliminar</button>
-    <a href="{% url 'gestionar_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-danger" title="Confirmar la eliminación del usuario">Eliminar</button>
+    <a href="{% url 'gestionar_usuarios' %}" class="btn btn-secondary" title="Volver a la lista de usuarios sin eliminar">Cancelar</a>
 </form>
 {% endblock %}

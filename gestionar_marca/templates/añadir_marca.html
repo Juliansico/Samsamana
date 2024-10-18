@@ -1,40 +1,44 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Añadir Nueva Marca</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    
-    <div class="form-group">
-        <label for="{{ form.nombre.id_for_label }}">Nombre:</label>
-        {{ form.nombre }}
-        {% if form.nombre.errors %}
-            <div class="alert alert-danger">
-                {% for error in form.nombre.errors %}
-                    {{ error }}
-                {% endfor %}
+<div class="container mt-5 mb-5 d-flex flex-column justify-content-center" style="min-height: 80vh;">
+    <h2 class="text-center mb-4">Añadir Nueva Marca</h2>
+    <form method="post" enctype="multipart/form-data" class="text-center">
+        {% csrf_token %}
+        
+        <div class="form-group mb-3">
+            <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre:</label>
+            <div class="mx-auto" style="max-width: 300px;">
+                {{ form.nombre }}
             </div>
-        {% endif %}
-    </div>
+            {% if form.nombre.errors %}
+                <div class="alert alert-danger mt-2">
+                    {% for error in form.nombre.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
 
-    <div class="form-group">
-        <label for="{{ form.logoTipo.id_for_label }}">Logo Tipo:</label>
-        {{ form.logoTipo }}
-        {% if form.logoTipo.errors %}
-            <div class="alert alert-danger">
-                {% for error in form.logoTipo.errors %}
-                    {{ error }}
-                {% endfor %}
+        <div class="form-group mb-3">
+            <label for="{{ form.logoTipo.id_for_label }}" class="form-label">Logo Tipo:</label>
+            <div class="mx-auto" style="max-width: 300px;">
+                {{ form.logoTipo }}
             </div>
-        {% endif %}
-    </div>
+            {% if form.logoTipo.errors %}
+                <div class="alert alert-danger mt-2">
+                    {% for error in form.logoTipo.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
 
-    <div class="form-group">
-        <label for="{{ form.estado.id_for_label }}">Estado:</label>
-        {{ form.estado }}
-    </div>
 
-    <button type="submit" class="btn btn-primary">Guardar Marca</button>
-</form>
-<a href="{% url 'gestionar_marca' %}" class="btn btn-secondary">Volver</a>
+        <button type="submit" class="btn btn-primary mt-3">Guardar Marca</button>
+    </form>
+    <div class="text-center mt-3">
+        <a href="{% url 'gestionar_marca' %}" class="btn btn-secondary">Volver</a>
+    </div>
+</div>
 {% endblock %}

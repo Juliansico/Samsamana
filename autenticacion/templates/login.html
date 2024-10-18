@@ -13,7 +13,7 @@
     <div class="login-container">
         <div class="login-form">
             <img src="{% static 'img/Samsamanalogo1PNG.png' %}" alt="Samsamana Logo" class="logo">
-            <h2>Iniciar Sesion</h2>
+            <h2>Iniciar Sesión</h2>
             <form method="post" action="{% url 'login' %}">
                 {% csrf_token %}
                 <div class="input-group">
@@ -29,6 +29,7 @@
             <div class="additional-links">
                 <a href="{% url 'recuperar_contrasena' %}">¿Olvidaste tu contraseña?</a>
                 <p>¿No tienes una cuenta? <a href="{% url 'registrar' %}">Crear nueva cuenta</a></p>
+                <p>Al iniciar sesión, aceptas nuestras <a href="{% url 'politicas' %}">Políticas de Términos y Condiciones</a> y <a href="{% url 'politicas' %}">Política de Datos Personales</a>.</p>
             </div>
         </div>
         <div class="login-image">

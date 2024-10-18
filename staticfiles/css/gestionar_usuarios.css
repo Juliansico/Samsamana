@@ -1,0 +1,280 @@
+/* Estilos generales */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    color: #000000;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Espaciado adicional para diferenciar módulos */
+.container > * {
+    margin-bottom: 30px;
+}
+
+/* Títulos */
+h2 {
+    font-size: 28px;
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Mejorando la organización del espacio en el formulario */
+.form-control, .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.btn {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Botones primarios */
+.btn-primary {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+/* Botones secundarios */
+.btn-secondary {
+    background-color: #95a5a6;
+    border-color: #95a5a6;
+    margin-left: 10px;
+}
+
+.btn-secondary:hover {
+    background-color: #7f8c8d;
+    border-color: #7f8c8d;
+}
+
+/* Efecto hover y animaciones */
+a:hover, button:hover {
+    opacity: 0.8;
+}
+
+/* Tabla */
+.table-usuarios {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.table-usuarios thead th {
+    background-color: #f1f3f5;
+    color: #2c3e50;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-bottom: none;
+}
+
+.table-usuarios tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+.table-usuarios th, .table-usuarios td {
+    border-top: none;
+    border-bottom: 1px solid #e9ecef;
+    padding: 15px;
+    vertical-align: middle;
+}
+
+/* Efecto fade-in para filas de tabla */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.table-usuarios tbody tr {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Estilos para los botones de acción en la tabla */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* Ajuste del ancho de la columna de acciones */
+.table-usuarios th:last-child,
+.table-usuarios td:last-child {
+    width: 150px;
+}
+
+/* Estilos para exportar */
+.export-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.export-buttons .btn {
+    flex: 0 0 auto;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .btn, .form-control, .form-select {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .table-usuarios thead {
+        display: none;
+    }
+
+    .table-usuarios tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    .table-usuarios tbody tr td {
+        display: block;
+        text-align: right;
+        font-size: 14px;
+        border-bottom: 1px solid #e9ecef;
+        padding: 10px 0;
+    }
+
+    .table-usuarios tbody tr td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .table-usuarios tbody tr td:last-child {
+        border-bottom: none;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .btn-sm {
+        width: 100%;
+    }
+
+    .export-buttons {
+        flex-direction: column;
+    }
+
+    .export-buttons .btn {
+        width: 100%;
+    }
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+    .table-usuarios tbody tr {
+        display: grid;
+        grid-template-columns: 1fr; /* Cada fila será una columna en móviles */
+        gap: 10px;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-usuarios tbody tr td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    /* Ocultar encabezados en pantallas pequeñas */
+    .table-usuarios thead {
+        display: none;
+    }
+
+    /* Alinear los datos en columnas */
+    .table-usuarios tbody tr td::before {
+        content: attr(data-label); /* Mostrar el nombre de la columna antes del contenido */
+        font-weight: bold;
+        color: #2c3e50;
+        text-transform: uppercase;
+        display: block;
+    }
+
+    /* Botones en la parte inferior alineados horizontalmente */
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .btn-sm {
+        flex: 1;
+        margin: 0 5px; /* Espacio entre los botones */
+        padding: 8px 0; /* Tamaño uniforme para los botones */
+        font-size: 13px;
+    }
+}
+
+
+    .table-usuarios tbody tr td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    /* Ocultar encabezados en pantallas pequeñas */
+    .table-usuarios thead {
+        display: none;
+    }
+
+    /* Personalizar cómo se ven los datos */
+    .table-usuarios tbody tr td::before {
+        content: attr(data-label); /* Mostrar el nombre de la columna antes del contenido */
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #2c3e50;
+    }
+
+    /* Ajustar el botón de acción para que ocupe todo el ancho */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .btn-sm {
+        width: 100%;
+    }
+}
+

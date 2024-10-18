@@ -1,0 +1,292 @@
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url('../img/fondo.jpeg') no-repeat center center;
+    overflow: hidden;
+}
+
+.registro-container {
+    display: flex;
+    flex-direction: row;
+    width: 1100px; /* Aumentar el tamaño del contenedor */
+    height: 800px; /* Aumentar la altura del contenedor */
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.registro-form {
+    width: 50%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow-y: auto; /* Permite el desplazamiento vertical */
+    height: 100%; /* Asegura que el formulario tome toda la altura del contenedor */
+}
+
+.registro-form h2 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.registro-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.registro-group i {
+    position: absolute;
+    top: 63%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+input[type="text"], input[type="email"], input[type="password"], select {
+    width: 100%;
+    padding: 12px 50px;
+    border-radius: 30px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    transition: 0.3s;
+    background-color: #f9f9f9;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
+    border-color: #74ebd5;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(116, 235, 213, 0.5);
+}
+
+.registro-btn {
+    position: relative;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(45deg, #74ebd5, #ACB6E5);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.4s;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.registro-btn:before {
+    content: '';
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.1);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    transition: 0.6s;
+    z-index: 0;
+}
+
+.registro-btn:hover:before {
+    width: 0;
+    height: 0;
+}
+
+.registro-btn:hover {
+    background-color: #00796b;
+}
+
+.registro-links {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.registro-links a {
+    color: #74ebd5;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.registro-links a:hover {
+    color: #000000;
+}
+
+.registro-image {
+    position: relative;
+    width: 50%;
+    height: 100%;
+    background: url('../img/Resgistrar.jpg') no-repeat center center;
+    background-size: cover; /* Ajusta la imagen para cubrir todo el contenedor */
+    border-radius: 0 15px 15px 0;
+}
+
+.registro-image:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* Overlay oscuro */
+    top: 0;
+    left: 0;
+}
+
+.image-text {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    color: white;
+    font-size: 24px;
+    line-height: 1.2;
+    z-index: 1;
+}
+
+/* Estilos para la barra de desplazamiento */
+.registro-form::-webkit-scrollbar {
+    width: 12px;
+}
+
+.registro-form::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 10px;
+}
+
+.registro-form::-webkit-scrollbar-thumb {
+    background: #74ebd5;
+    border-radius: 10px;
+}
+
+.registro-form::-webkit-scrollbar-thumb:hover {
+    background: #00796b;
+}
+
+/* Responsividad */
+@media (max-width: 1024px) {
+    .registro-container {
+        width: 90%;
+        height: auto;
+        flex-direction: column;
+    }
+
+    .registro-form, .registro-image {
+        width: 100%;
+        height: auto;
+        border-radius: 15px;
+    }
+
+    .registro-image {
+        height: 300px;
+        border-radius: 0 0 15px 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    input[type="text"], input[type="email"], input[type="password"], select {
+        padding: 12px 40px;
+    }
+
+    .registro-group i {
+        left: 5px;
+    }
+
+    .registro-btn {
+        font-size: 16px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .registro-container {
+        width: 100%;
+        height: auto;
+    }
+
+    .registro-form {
+        padding: 20px;
+    }
+
+    .registro-image {
+        height: 200px;
+    }
+
+    .logo {
+        width: 100px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    .registro-btn {
+        font-size: 14px;
+    }
+}
+
+/* Animaciones para los botones */
+@keyframes gradient-move {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* SweetAlert2 Custom Styles */
+.swal2-custom-popup {
+    background-color: #f3f3f3 !important;
+    border-radius: 15px !important;
+}
+
+.swal2-custom-title {
+    color: #333 !important;
+    font-size: 24px !important;
+}
+
+.swal2-custom-content {
+    color: #555 !important;
+    font-size: 16px !important;
+}
+
+.swal2-custom-footer a {
+    color: #5dceb9 !important;
+}
+
+.swal2-custom-footer a:hover {
+    color: #000000 !important; 
+}
+
+.registro-links a:hover {
+    color: #000000;
+}
+
+.swal2-custom-confirm-button {
+    background-color: #74ebd5 !important;
+    color: white !important;
+    border-radius: 30px !important;
+    padding: 10px 20px !important;
+    font-size: 16px !important;
+}
+
+.swal2-custom-confirm-button:hover {
+    background-color: #000000 !important;
+}

@@ -2,42 +2,52 @@
 
 {% block titulo %} Lista de Ventas {% endblock %}
 
-{% block content %} 
-<div class="card">
-    <div class="card-header">
-        <a href="{% url 'crear_venta' %}" class="btn btn-success">Crear nueva venta</a>
+{% block content %}
+<div class="container my-5">
+    <div class="text-center">
+        <h1 class="font-weight-bold">Gestionar Ventas</h1>
     </div>
-    <div class="card-body">
-        <h4 class="card-title">Ventas</h4>
-        <div class="table-responsive">
-            <table class="table table-primary">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Usuario</th>
-                        <th>Fecha</th>
-                        <th>Valor Total</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for venta in ventas %}
-                    <tr>
-                        <td>{{ venta.id_venta }}</td>
-                        <td>{{ venta.usuario.username }}</td>
-                        <td>{{ venta.fecha }}</td>
-                        <td>{{ venta.valor_total }}</td>
-                        <td>
-                            <a href="{% url 'detalle_venta' id=venta.id %}" class="btn btn-info">Ver</a>
-                            <a href="{% url 'editar_venta' id=venta.id %}" class="btn btn-warning">Editar</a>
-                            <a href="{% url 'eliminar_venta' id=venta.id %}" class="btn btn-danger">Eliminar</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                <a href="{% url 'reporte_ventas_excel' %}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">Exportar a Excel</a>
-                <a href="{% url 'reporte_ventas_pdf' %}" class="btn btn-primary" style="background-color: #f44336; border-color: #f44336;">Exportar a PDF</a>
-            </table>
+    <div class="card">
+        <div class="card-header">
+            <a href="{% url 'crear_venta' %}" class="btn btn-success" title="Crear una nueva venta" data-bs-toggle="tooltip" data-bs-placement="top">Crear nueva venta</a>
+        </div>
+        <div class="card-body">
+            <h4 class="card-title">Ventas</h4>
+            <div class="table-responsive">
+                <table id="tabla-ventas" class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Fecha</th>
+                            <th>Valor Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for venta in ventas %}
+                        <tr>
+                            <td>{{ venta.id }}</td>
+                            <td>{{ venta.usuario.username }}</td>
+                            <td>{{ venta.fecha }}</td>
+                            <td>{{ venta.valor_total }}</td>
+                            <td>
+                                <a href="{% url 'detalle_venta' id=venta.id %}" class="btn btn-info" title="Ver detalles de la venta" data-bs-toggle="tooltip" data-bs-placement="top">Ver</a>
+                                <a href="{% url 'eliminar_venta' id=venta.id %}" class="btn btn-danger" title="Eliminar esta venta" data-bs-toggle="tooltip" data-bs-placement="top">Eliminar</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No se encontraron ventas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'reporte_ventas_excel' %}" class="btn btn-success" title="Exportar ventas a Excel" data-bs-toggle="tooltip" data-bs-placement="top">Exportar a Excel</a>
+                    <a href="{% url 'reporte_ventas_pdf' %}" class="btn btn-danger" title="Exportar ventas a PDF" data-bs-toggle="tooltip" data-bs-placement="top">Exportar a PDF</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

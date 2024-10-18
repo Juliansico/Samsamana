@@ -10,7 +10,22 @@ from django.utils.http import urlsafe_base64_decode
 from django.urls import reverse_lazy
 from .forms import FormularioRegistro
 from django.contrib.auth import get_user_model
+from django.views import View
+from django.views.generic import TemplateView
+from django.shortcuts import render
+
+
 import logging
+
+def consulta_terminos(request):
+    return render(request, 'tu_template_terminos.html')  # Cambia 'tu_template_terminos.html' por el nombre real de tu template
+
+class TerminosCondicionesView(TemplateView):
+    template_name = 'terminos_condiciones.html'
+    
+class PoliticasView(View):
+    def get(self, request):
+        return render(request, 'politicas.html')
 
 logger = logging.getLogger(__name__)
 

@@ -1,25 +1,18 @@
 {% extends "base.html" %}
 
-{% block titulo %} Editar compra {% endblock %}
+{% block titulo %} Eliminar compra {% endblock %}
 
 {% block content %} 
 <div class="card">
-    <div class="card-header">Editar compra #{{ compra.id_compra }}</div>
+    <div class="card-header">Eliminar compra</div>
     <div class="card-body">
-        <h4 class="card-title">Editar Datos de la compra</h4>
+        <h4 class="card-title">¿Estás seguro de que deseas eliminar este compra?</h4>
+        <p>{{ compra.id }} de {{ compra.usuario }}</p>
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <h5>Detalles de la compra</h5>
-            {{ formset.management_form }}
-            {% for form in formset %}
-                <div class="formset-row">
-                    {{ form.as_p }}
-                </div>
-            {% endfor %}
-            <input type="submit" class="btn btn-success" value="Actualizar compra">
-            <a href="{% url 'gestionar_compras' %}" class="btn btn-warning">Cancelar</a>
+            <input type="submit" class="btn btn-danger" value="Sí, eliminar">
+            <a href="{% url 'gestionar_compras' %}" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
 </div>
-{% endblock %}
+{% endblock %}

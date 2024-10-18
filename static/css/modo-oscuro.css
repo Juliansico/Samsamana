@@ -1,0 +1,316 @@
+/* Estilos existentes para el modo oscuro */
+body.dark-mode, 
+body.dark-mode #content {
+    background-color: black;
+    color: white;
+}
+
+body.dark-mode .theme-button,
+body.dark-mode .form-control,
+body.dark-mode select,
+body.dark-mode .table,
+body.dark-mode #nav-header,
+body.dark-mode #nav-footer,
+body.dark-mode #nav-content,
+body.dark-mode #nav-bar,
+body.dark-mode a,
+body.dark-mode .container,
+body.dark-mode #venta-form,
+body.dark-mode .card-header,
+body.dark-mode .venta-info,
+body.dark-mode .editar-presentacion-container,
+body.dark-mode .formset-form,
+body.dark-mode .compra-info,
+body.dark-mode .btn.btn-primary.exportar-excel,
+body.dark-mode .page-link,
+body.dark-mode .social-container,
+body.dark-mode .dark-mode,
+body.dark-mode .container.mt-4{
+    background-color: #444;
+    color: white;
+}
+
+body.dark-mode .table th,
+body.dark-mode .table td,
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4, body.dark-mode h5, body.dark-mode h6,
+body.dark-mode .table-responsive {
+    color: white !important;
+}
+
+body.dark-mode a {
+    color: #add8e6;
+}
+
+body.dark-mode .pagination .page-link {
+    background-color: #444;
+    color: white;
+    border-color: #666;
+}
+
+body.dark-mode .pagination .page-link:hover {
+    background-color: #555;
+    color: white;
+}
+
+body.dark-mode .pagination .active .page-link {
+    background-color: #666;
+    color: white;
+    border-color: #666;
+}
+
+body.dark-mode .btn {
+    background-color: #333;
+    color: #ffffff;
+    border: 1px solid #555;
+}
+
+body.dark-mode .btn:hover {
+    background-color: #444;
+    color: #ffffff;
+}
+
+body.dark-mode table thead th {
+    color: white !important;
+    background-color: #333 !important;
+}
+
+/* Nuevas reglas para el dashboard en modo oscuro */
+body.dark-mode .dashboard-container {
+    background-color: black;
+}
+
+body.dark-mode .dashboard-title {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.1);
+}
+
+body.dark-mode .stat-card {
+    background-color: #333;
+    box-shadow: 0px 6px 12px rgba(255, 255, 255, 0.1);
+    border: 2px solid #444;
+}
+
+body.dark-mode .stat-card:hover {
+    border-color: white;
+}
+
+body.dark-mode .stat-icon {
+    color: white;
+}
+
+body.dark-mode .stat-title {
+    color: #ccc;
+}
+
+body.dark-mode .stat-value {
+    color: white;
+}
+
+body.dark-mode .chart-card {
+    background-color: #333;
+    box-shadow: 0px 6px 12px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .chart-title {
+    color: white;
+}
+
+body.dark-mode .weather-widget {
+    background-color: #333;
+    box-shadow: 0px 6px 12px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .weather-title {
+    color: white;
+}
+
+body.dark-mode .weather-icon {
+    color: #ffa500;
+}
+
+body.dark-mode .weather-temp {
+    color: white;
+}
+
+/* Asegúrate de que los gráficos sean legibles en modo oscuro */
+body.dark-mode canvas {
+    filter: invert(1) hue-rotate(180deg);
+}
+/* Ajustes adicionales para el modo oscuro */
+body.dark-mode {
+    background-color: #1e1e1e; /* Un fondo más oscuro pero no completamente negro */
+}
+
+body.dark-mode .container,
+body.dark-mode .card {
+    background-color: #2d2d2d; /* Fondo más oscuro para contenedores y tarjetas */
+    border-color: #3a3a3a;
+}
+
+body.dark-mode .btn-primary,
+body.dark-mode .btn-success,
+body.dark-mode .btn-danger {
+    background-color: #3a3a3a; /* Botones más oscuros */
+    border-color: #4a4a4a;
+    color: white;
+}
+
+body.dark-mode .btn-primary:hover,
+body.dark-mode .btn-success:hover,
+body.dark-mode .btn-danger:hover {
+    background-color: #4a4a4a;
+    border-color: #5a5a5a;
+}
+
+body.dark-mode .table {
+    color: #e0e0e0; /* Texto de la tabla ligeramente más claro */
+}
+
+body.dark-mode .table thead th {
+    background-color: #3a3a3a !important; /* Encabezados de tabla más oscuros */
+    color: #ffffff !important;
+    border-color: #4a4a4a;
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #333333; /* Filas impares más oscuras */
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+    background-color: #404040; /* Color al pasar el mouse sobre las filas */
+}
+
+body.dark-mode .pagination .page-item.active .page-link {
+    background-color: #007bff; /* Color de la página activa en la paginación */
+    border-color: #007bff;
+}
+
+body.dark-mode .form-control,
+body.dark-mode select.form-control {
+    background-color: #3a3a3a;
+    border-color: #4a4a4a;
+    color: #e0e0e0;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode select.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Ajuste para el mensaje "No se encontraron ventas" */
+body.dark-mode .table td {
+    background-color: #2d2d2d; /* Mismo color que el fondo de la tarjeta */
+}
+/* Estilos existentes para el modo oscuro */
+body.dark-mode, 
+body.dark-mode #content {
+    background-color: #1e1e1e;
+    color: white;
+}
+
+/* ... (mantener los estilos existentes del modo oscuro) ... */
+
+/* Nuevas reglas para el header y footer en modo oscuro */
+body.dark-mode #header,
+body.dark-mode #footer {
+    background: linear-gradient(45deg, #2c2c2c, #3a3a3a);
+    color: #e0e0e0;
+}
+
+body.dark-mode #header:before,
+body.dark-mode #footer:before {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode #header h1 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .social-container a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .social-container a:hover {
+    color: #ffffff;
+}
+
+body.dark-mode #footer a {
+    color: #add8e6;
+}
+
+/* Ajuste de la animación del gradiente para el modo oscuro */
+@keyframes dark-gradient-move {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+body.dark-mode #header,
+body.dark-mode #footer {
+    background-size: 200% 200%;
+    animation: dark-gradient-move 5s ease infinite;
+}
+
+/* Mantener los estilos responsivos */
+@media (max-width: 768px) {
+    body.dark-mode #header,
+    body.dark-mode #footer {
+        padding: 15px;
+    }
+
+    body.dark-mode #header h1 {
+        font-size: 20px;
+    }
+
+    body.dark-mode .social-container a {
+        font-size: 18px;
+    }
+}
+
+/* ... (mantener el resto de los estilos del modo oscuro) ... */
+
+/* Existing dark mode styles... */
+
+/* New styles for the navigation/breadcrumb area */
+body.dark-mode .breadcrumb,
+body.dark-mode nav.bg-light {
+    background-color: #2d2d2d !important;
+    border-color: #3a3a3a !important;
+}
+
+body.dark-mode .breadcrumb-item,
+body.dark-mode .breadcrumb-item.active,
+body.dark-mode .breadcrumb-item + .breadcrumb-item::before {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .breadcrumb a {
+    color: #add8e6 !important;
+}
+
+body.dark-mode .breadcrumb a:hover {
+    color: #ffffff !important;
+    text-decoration: underline;
+}
+
+/* Ensure that any light background is overridden */
+body.dark-mode .bg-light {
+    background-color: #2d2d2d !important;
+}
+
+/* Additional styles to ensure text visibility */
+body.dark-mode nav,
+body.dark-mode nav a,
+body.dark-mode nav span {
+    color: #e0e0e0 !important;
+}
+
+/* ... (rest of your existing dark mode styles) ... */
+

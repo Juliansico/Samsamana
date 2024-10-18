@@ -1,0 +1,98 @@
+/* main.css */
+
+.main-content {
+  background-color: #ffe6e6;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.module-title {
+  color: #4a0e78;
+  font-size: 24px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #9c88ff;
+  padding-bottom: 10px;
+}
+
+.action-button {
+  background-color: #7c5cbf;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.action-button:hover {
+  background-color: #6c4aa6;
+}
+
+.search-bar {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #9c88ff;
+  border-radius: 5px 0 0 5px;
+}
+
+.search-button {
+  background-color: #9c88ff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+  border: 1px solid #9c88ff;
+  padding: 10px;
+  text-align: left;
+}
+
+.data-table th {
+  background-color: #9c88ff;
+  color: white;
+}
+
+.data-table tr:nth-child(even) {
+  background-color: #e6e0ff;
+}
+
+/* Estilos adicionales para main.css */
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.btn-sm {
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.action-button.btn-sm {
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.data-table td, .data-table th {
+  padding: 0.75rem;
+  vertical-align: top;
+}
+
+.data-table tbody tr:hover {
+  background-color: #d4c4ff;
+}

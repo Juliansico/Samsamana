@@ -1,71 +1,123 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Gestionar Usuarios</h2>
+<div class="container my-5">
+    <h2 class="mb-4">Gestionar Usuarios</h2>
 
-<a href="{% url 'añadir_usuario' %}" class="btn btn-primary mb-3">Añadir Usuario</a>
+    <a href="{% url 'añadir_usuario' %}" class="btn btn-primary mb-3" data-toggle="tooltip" title="Añadir un nuevo usuario">Añadir Usuario</a>
 
-<form method="get" action="{% url 'filtrar_usuarios' %}">
-    <div class="row mb-3">
-        <div class="col-md-3">
-            <input type="text" class="form-control" placeholder="Buscar por nombre..." name="nombre" value="{{ request.GET.nombre }}">
+    <form method="get" action="{% url 'filtrar_usuarios' %}">
+        <div class="row mb-3">
+            <div class="col-md-3 col-sm-12">
+                <input type="text" class="form-control" placeholder="Buscar por nombre..." name="nombre" value="{{ request.GET.nombre }}" title="Buscar usuarios por nombre">
+            </div>
+            <div class="col-md-3 col-sm-12">
+                <input type="text" class="form-control" placeholder="Buscar por documento..." name="documento" value="{{ request.GET.documento }}" title="Buscar usuarios por documento">
+            </div>
+            <div class="col-md-3 col-sm-12">
+                <input type="text" class="form-control" placeholder="Buscar por teléfono..." name="telefono" value="{{ request.GET.telefono }}" title="Buscar usuarios por teléfono">
+            </div>
+            <div class="col-md-3 col-sm-12">
+                <select id="estado" name="estado" class="form-control" title="Filtrar por estado de usuario">
+                    <option value="">Filtrar estado (Todos)</option>
+                    <option value="activado" {% if request.GET.estado == "activado" %}selected{% endif %}>Activado</option>
+                    <option value="inactivado" {% if request.GET.estado == "inactivado" %}selected{% endif %}>Inactivado</option>
+                </select>
+            </div>
+            <div class="col-md-12 mt-3">
+                <button type="submit" class="btn btn-outline-info" title="Buscar usuarios según los criterios especificados">Buscar</button>
+            </div>
         </div>
-        <div class="col-md-3">
-            <input type="text" class="form-control" placeholder="Buscar por documento..." name="documento" value="{{ request.GET.documento }}">
-        </div>
-        <div class="col-md-3">
-            <input type="text" class="form-control" placeholder="Buscar por teléfono..." name="telefono" value="{{ request.GET.telefono }}">
-        </div>
-        <div class="col-md-3">
-            <select id="estado" name="estado" class="form-control">
-                <option value="">Filtrar estado (Todos)</option>
-                <option value="activado" {% if request.GET.estado == "activado" %}selected{% endif %}>Activado</option>
-                <option value="inactivado" {% if request.GET.estado == "inactivado" %}selected{% endif %}>Inactivado</option>
-            </select>
-        </div>
-        <div class="col-md-12 mt-3">
-            <button type="submit" class="btn btn-outline-info">Buscar</button>
-        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table id="tabla-usuarios" class="table table-striped table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Apellido</th>
+                    <th>Correo</th>
+                    <th>Documento</th>
+                    <th>Teléfono</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.id }}</td>
+                    <td>{{ usuario.username }}</td>
+                    <td>{{ usuario.apellido }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.documento }}</td>
+                    <td>{{ usuario.telefono }}</td>
+                    <td>{{ usuario.estado|yesno:"Activo,Inactivo" }}</td>
+                    <td>
+                        <a href="{% url 'editar_usuario' usuario.id %}" class="btn btn-sm btn-primary" title="Editar usuario">Editar</a>
+                        <a href="{% url 'activar_inactivar_usuario' usuario.id %}" class="btn btn-sm btn-secondary" title="{% if usuario.estado %}Desactivar{% else %}Activar{% endif %} usuario">
+                            {% if usuario.estado %}Desactivar{% else %}Activar{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No se encontraron usuarios.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-</form>
 
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{% url 'reporte_usuarios_excel' %}" class="btn btn-success" title="Exportar usuarios a Excel">Exportar a Excel</a>
+        <a href="{% url 'reporte_usuarios_pdf' %}" class="btn btn-danger" title="Exportar usuarios a PDF">Exportar a PDF</a>
+    </div>
+</div>
 
+{% block extra_js %}
+{{ block.super }}
+<script>
+    $(document).ready(function() {
+        // Inicializar tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+        
+        function initializeDataTable(tableId) {
+            var $table = $('#' + tableId);
+            if ($table.length && !$.fn.DataTable.isDataTable('#' + tableId)) {
+                var table = $table.DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": true,
+                    "responsive": true,
+                    "language": {
+                        "sProcessing": "Procesando...",
+                        "sLengthMenu": "Mostrar _MENU_ registros",
+                        "sZeroRecords": "No se encontraron resultados",
+                        "sEmptyTable": "Ningún dato disponible en esta tabla",
+                        "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                        "sSearch": "Buscar:",
+                        "oPaginate": {
+                            "sFirst": "Primero",
+                            "sLast": "Último",
+                            "sNext": "Siguiente",
+                            "sPrevious": "Anterior"
+                        }
+                    }
+                });
+                console.log(tableId + " DataTable initialized", table);
+            }
+        }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Usuario</th>
-            <th>Apellido</th>
-            <th>Correo</th>
-            <th>Documento</th>
-            <th>Teléfono</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for usuario in usuarios %}
-        <tr>
-            <td>{{ usuario.id }}</td>
-            <td>{{ usuario.username }}</td>
-            <td>{{ usuario.apellido }}</td>
-            <td>{{ usuario.email }}</td>
-            <td>{{ usuario.documento }}</td>
-            <td>{{ usuario.telefono }}</td>
-            <td>{{ usuario.estado|yesno:"Activo,Inactivo" }}</td>
-            <td>
-                <a href="{% url 'editar_usuario' usuario.id %}" class="btn btn-sm btn-primary">Editar</a>
-                <a href="{% url 'activar_inactivar_usuario' usuario.id %}" class="btn btn-sm btn-secondary">
-                    {% if usuario.estado %}Desactivar{% else %}Activar{% endif %}
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-    <a href="{% url 'reporte_usuarios_excel' %}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">Exportar a Excel</a>
-    <a href="{% url 'reporte_usuarios_pdf' %}" class="btn btn-primary" style="background-color: #f44336; border-color: #f44336;">Exportar a PDF</a>
-    
-
-</table>
+        console.log("Usuarios page ready");
+        initializeDataTable('tabla-usuarios');
+    });
+</script>
+{% endblock %}
 {% endblock %}

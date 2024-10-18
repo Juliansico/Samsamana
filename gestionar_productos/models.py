@@ -23,6 +23,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=255)
     marca = models.ForeignKey('gestionar_marca.Marca', on_delete=models.CASCADE)
     presentacion = models.ForeignKey('gestionar_presentacion.Presentacion', on_delete=models.CASCADE, null=False)
+    stock = models.IntegerField(default=0)
     categoria = models.ForeignKey('gestionar_categoria.Categoria', on_delete=models.CASCADE)
     proveedor = models.ForeignKey('gestionar_proveedor.Proveedor', on_delete=models.CASCADE)
 

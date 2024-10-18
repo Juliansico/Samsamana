@@ -9,18 +9,17 @@ class BaseModelForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
         
-        self.fields['estado'].widget.attrs.update({
-            'class': 'form-check-input',
-            'style': 'width: 20px; height: 20px;'
-        })
+        # Eliminar la referencia al campo 'estado' en caso de que no exista
+        if 'estado' in self.fields:
+            self.fields['estado'].widget.attrs.update({
+                'class': 'form-check-input',
+                'style': 'width: 20px; height: 20px;'
+            })
 
 class CategoriaForm(BaseModelForm):
     class Meta:
         model = Categoria
-        fields = ['nombre', 'estado']
-        widgets = {
-            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
+        fields = ['nombre']  # Eliminamos 'estado' de los fields
         error_messages = {
             'nombre': {
                 'required': 'Este campo es obligatorio.',
@@ -33,4 +32,7 @@ class CategoriaForm(BaseModelForm):
             raise ValidationError("Este campo es obligatorio.")
         if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$', nombre):
             raise ValidationError("El nombre solo puede contener letras y espacios.")
+        if Categoria.objects.filter(nombre__iexact=nombre).exists():
+            raise ValidationError("Ya existe una categoría con este nombre.")
+    
         return nombre

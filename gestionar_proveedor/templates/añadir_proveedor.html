@@ -1,25 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Añadir Nuevo Proveedor</h2>
-<form method="post">
-    {% csrf_token %}
-    
-    {% for field in form %}
-    <div class="form-group">
-        <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-        {{ field }}
-        {% if field.errors %}
-            <div class="alert alert-danger">
-                {% for error in field.errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
-    </div>
-    {% endfor %}
+<div class="container mt-5 mb-5">
+    <h2 class="text-center">Añadir Nuevo Proveedor</h2>
+    <form method="post" class="text-center">
+        {% csrf_token %}
+        
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="alert alert-danger">
+                    {% for error in field.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        {% endfor %}
 
-    <button type="submit" class="btn btn-primary">Guardar Proveedor</button>
-</form>
-<a href="{% url 'gestionar_proveedor' %}" class="btn btn-secondary">Volver</a>
+        <button type="submit" class="btn btn-primary">Guardar Proveedor</button>
+    </form>
+    <div class="text-center mt-3">
+        <a href="{% url 'gestionar_proveedor' %}" class="btn btn-secondary">Volver</a>
+    </div>
+</div>
 {% endblock %}

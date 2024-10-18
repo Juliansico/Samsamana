@@ -1,17 +1,20 @@
 {% extends "base.html" %}
 
 {% block titulo %} Eliminar venta {% endblock %}
-
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/eliminar_venta.css' %}">
+{% endblock %}
 {% block content %} 
 <div class="card">
     <div class="card-header">Eliminar venta</div>
     <div class="card-body">
-        <h4 class="card-title">¿Estás seguro de que deseas eliminar este venta?</h4>
+        <h4 class="card-title">¿Estás seguro de que deseas eliminar esta venta?</h4>
         <p>{{ venta.id_venta }} de {{ venta.usuario }}</p>
         <form method="post">
             {% csrf_token %}
-            <input type="submit" class="btn btn-danger" value="Sí, eliminar">
-            <a href="{% url 'gestionar_ventas' %}" class="btn btn-secondary">Cancelar</a>
+            <input type="submit" class="btn btn-danger" value="Sí, eliminar" title="Confirmar eliminación" data-bs-toggle="tooltip" data-bs-placement="top">
+            <a href="{% url 'gestionar_ventas' %}" class="btn btn-secondary" title="Cancelar eliminación" data-bs-toggle="tooltip" data-bs-placement="top">Cancelar</a>
         </form>
     </div>
 </div>

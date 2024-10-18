@@ -1,73 +1,77 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Gestionar Productos{% endblock %}
-
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/productos.css' %}">
+{% block title %}
+Gestionar Productos
 {% endblock %}
 
 {% block content %}
-    <h2>Gestionar Productos</h2>
+<h2>Gestionar Productos</h2>
+<a href="{% url 'añadir_producto' %}" class="btn btn-primary mb-3" title="Añadir un nuevo producto" data-bs-toggle="tooltip" data-bs-placement="top">Añadir Producto</a>
 
-    <a href="{% url 'añadir_producto' %}" class="btn btn-primary mb-3">Añadir Producto</a>
-
-    <form method="get" action="{% url 'filtrar_productos' %}">
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <input type="text" class="form-control" placeholder="Buscar por nombre..." name="buscar" value="{{ request.GET.buscar }}">
-            </div>
-            <div class="col-md-3">
-                <input type="number" class="form-control" placeholder="Precio mínimo" name="precio_min" value="{{ request.GET.precio_min }}">
-            </div>
-            <div class="col-md-3">
-                <input type="number" class="form-control" placeholder="Precio máximo" name="precio_max" value="{{ request.GET.precio_max }}">
-            </div>
-            <div class="col-md-3">
-                <select id="categoria" name="categoria" class="form-control">
-                    <option value="">Categoría (Todos)</option>
-                    {% for categoria in categorias %}
-                        <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>{{ categoria.nombre }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select id="marca" name="marca" class="form-control">
-                    <option value="">Marca (Todos)</option>
-                    {% for marca in marcas %}
-                        <option value="{{ marca.id }}" {% if request.GET.marca == marca.id|stringformat:"s" %}selected{% endif %}>{{ marca.nombre }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select id="presentacion" name="presentacion" class="form-control">
-                    <option value="">Presentación (Todos)</option>
-                    {% for presentacion in presentaciones %}
-                        <option value="{{ presentacion.id }}" {% if request.GET.presentacion == presentacion.id|stringformat:"s" %}selected{% endif %}>{{ presentacion.nombre }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select id="unidad_medida" name="unidad_medida" class="form-control">
-                    <option value="">Unidad de Medida (Todos)</option>
-                    {% for key, value in Producto.UNIDADES_MEDIDA %}
-                        <option value="{{ key }}" {% if request.GET.unidad_medida == key %}selected{% endif %}>{{ value }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select id="estado" name="estado" class="form-control">
-                    <option value="">Filtrar estado (Todos)</option>
-                    <option value="activado" {% if request.GET.estado == "activado" %}selected{% endif %}>Activado</option>
-                    <option value="inactivado" {% if request.GET.estado == "inactivado" %}selected{% endif %}>Inactivado</option>
-                </select>
-            </div>
-            <div class="col-md-12 mt-3">
-                <button type="submit" class="btn btn-outline-info">Buscar</button>
-            </div>
+<form method="get" action="{% url 'filtrar_productos' %}">
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <input type="text" class="form-control" placeholder="Buscar por nombre..." name="buscar" value="{{ request.GET.buscar }}">
         </div>
-    </form>
-    <table class="table table-hover table-productos">
+        <div class="col-md-3">
+            <input type="number" class="form-control" placeholder="Precio mínimo" name="precio_min" value="{{ request.GET.precio_min }}">
+        </div>
+        <div class="col-md-3">
+            <input type="number" class="form-control" placeholder="Precio máximo" name="precio_max" value="{{ request.GET.precio_max }}">
+        </div>
+        <div class="col-md-3">
+            <select id="categoria" name="categoria" class="form-control">
+                <option value="">Categoría (Todos)</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>{{ categoria.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="marca" name="marca" class="form-control">
+                <option value="">Marca (Todos)</option>
+                {% for marca in marcas %}
+                    <option value="{{ marca.id }}" {% if request.GET.marca == marca.id|stringformat:"s" %}selected{% endif %}>{{ marca.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="presentacion" name="presentacion" class="form-control">
+                <option value="">Presentación (Todos)</option>
+                {% for presentacion in presentaciones %}
+                    <option value="{{ presentacion.id }}" {% if request.GET.presentacion == presentacion.id|stringformat:"s" %}selected{% endif %}>{{ presentacion.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="unidad_medida" name="unidad_medida" class="form-control">
+                <option value="">Unidad de Medida (Todos)</option>
+                {% for key, value in Producto.UNIDADES_MEDIDA %}
+                    <option value="{{ key }}" {% if request.GET.unidad_medida == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="estado" name="estado" class="form-control">
+                <option value="">Filtrar estado (Todos)</option>
+                <option value="activado" {% if request.GET.estado == "activado" %}selected{% endif %}>Activado</option>
+                <option value="inactivado" {% if request.GET.estado == "inactivado" %}selected{% endif %}>Inactivado</option>
+            </select>
+        </div>
+        <div class="col-md-12 mt-3">
+            <button type="submit" class="btn btn-outline-info">Buscar</button>
+        </div>
+    </div>
+</form>
+
+<div class="d-flex justify-content-between mt-4">
+    <a href="{% url 'reporte_productos_excel' %}" class="btn btn-success" title="Exportar productos a Excel" data-bs-toggle="tooltip" data-bs-placement="top">Exportar a Excel</a>
+    <a href="{% url 'reporte_productos_pdf' %}" class="btn btn-danger" title="Exportar productos a PDF" data-bs-toggle="tooltip" data-bs-placement="top">Exportar a PDF</a>
+</div>
+
+<div class="table-responsive">
+    <table id="tabla-productos" class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th>ID</th>
@@ -96,17 +100,61 @@
                 <td>{% if producto.estado %}Activo{% else %}Inactivo{% endif %}</td>
                 <td>
                     <div class="action-buttons">
-                        <a href="{% url 'editar_producto' producto.id %}" class="btn btn-sm btn-primary">Editar</a>
-                        <a href="{% url 'activar_inactivar_producto' producto.id %}" class="btn btn-sm btn-secondary">
+                        <a href="{% url 'editar_producto' producto.id %}" class="btn btn-sm btn-primary" title="Editar producto" data-bs-toggle="tooltip" data-bs-placement="top">Editar</a>
+                        <a href="{% url 'activar_inactivar_producto' producto.id %}" class="btn btn-sm btn-secondary" title="{% if producto.estado %}Inactivar{% else %}Activar{% endif %}" data-bs-toggle="tooltip" data-bs-placement="top">
                             {% if producto.estado %}Inactivar{% else %}Activar{% endif %}
                         </a>
                     </div>
                 </td>
             </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="text-center">No se encontraron productos.</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
+{% endblock %}
 
-    <a href="{% url 'reporte_productos_excel' %}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">Exportar a Excel</a>
-    <a href="{% url 'reporte_productos_pdf' %}" class="btn btn-primary" style="background-color: #f44336; border-color: #f44336;">Exportar a PDF</a>
+{% block extra_js %}
+{{ block.super }}
+<script>
+    $(document).ready(function() {
+        // Destruye la tabla si ya existe
+        if ($.fn.DataTable.isDataTable('#tabla-productos')) {
+            $('#tabla-productos').DataTable().destroy();
+        }
+
+        // Inicializa la tabla
+        $('#tabla-productos').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sSearch": "Buscar:",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            }
+        });
+
+        // Inicializa los tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    });
+</script>
 {% endblock %}

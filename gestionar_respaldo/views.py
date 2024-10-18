@@ -16,6 +16,17 @@ import subprocess
 from datetime import datetime
 from .models import Respaldo
 
+
+
+def get_breadcrumbs(request):
+    path = request.path.split('/')[1:]
+    breadcrumbs = [{'title': 'Inicio', 'url': '/dashboard/'}]  # El inicio te lleva al dashboard
+    url = ''
+    for item in path:
+        url += f'/{item}'
+        breadcrumbs.append({'title': item.capitalize(), 'url': url})
+    return breadcrumbs
+
 User = get_user_model()
 
 
@@ -57,7 +68,8 @@ def gestionar_respaldos(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'gestionar_respaldos.html', {'page_obj': page_obj})
+    breadcrumbs = get_breadcrumbs(request)
+    return render(request, 'gestionar_respaldos.html', {'page_obj': page_obj, 'breadcrumbs': breadcrumbs})
 
 # Vista para crear un respaldo de la base de datos
 @method_decorator(never_cache, name='post')
@@ -100,7 +112,6 @@ class CrearRespaldoView(View):
 
         return redirect('gestionar_respaldos')
 
-# Vista para restaurar la base de datos
 @method_decorator(never_cache, name='post')
 class RestaurarRespaldoView(View):
     def post(self, request, *args, **kwargs):
@@ -123,6 +134,7 @@ class RestaurarRespaldoView(View):
 
                 # Verificar que el archivo de respaldo existe
                 if not os.path.exists(backup_path):
+                    print(f"El archivo de respaldo no existe en: {backup_path}")  # Línea añadida para depuración
                     messages.error(request, "El archivo de respaldo especificado no existe.")
                     return redirect('gestionar_respaldos')
 
@@ -130,16 +142,18 @@ class RestaurarRespaldoView(View):
                 backup_path_escaped = f"\"{backup_path}\""
 
                 # Comando para restaurar la base de datos
+                mysql_path = r'"C:\Program Files\MySQL\MySQL Server 9.0\bin\mysql.exe"'  # Ruta completa al ejecutable de mysql
                 command = (
-                    f"mysql -h {db_host} -P {db_port} -u {db_user} -p{db_password} "
-                    f"{db_name} < {backup_path_escaped}"
-                )
+                    f"{mysql_path} -h {db_host} -P {db_port} -u {db_user} -p{db_password} "
+    f"{db_name} < {backup_path_escaped}"
+)
 
                 # Ejecutar el comando y capturar la salida
                 result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
                 if result.returncode != 0:
                     messages.error(request, f"Error al restaurar la base de datos: {result.stderr}")
+                    print(f"Error: {result.stderr}")  # Imprimir error en consola para depuración
                 else:
                     messages.success(request, f"Base de datos restaurada desde {backup_id}")
 
@@ -160,6 +174,8 @@ def descargar_respaldo(request, respaldo_id):
         with open(file_path, 'rb') as fh:
             response = HttpResponse(fh.read(), content_type="application/octet-stream")
             response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path)
+            breadcrumbs = get_breadcrumbs(request)
+            response['breadcrumbs'] = breadcrumbs  # Añadir breadcrumbs a la respuesta, si es necesario
             return response
     raise Http404
 
@@ -185,19 +201,3 @@ class EliminarRespaldoView(View):
         return redirect('gestionar_respaldos')
 
 
-@never_cache
-def filtrar_respaldos(request):
-    respaldos = Respaldo.objects.all()
-
-    nombre_archivo = request.GET.get('nombre_archivo')
-    fecha_creacion = request.GET.get('fecha_creacion')
-    tamano = request.GET.get('tamano')
-
-    if nombre_archivo:
-        respaldos = respaldos.filter(nombre_archivo__icontains=nombre_archivo)
-    if fecha_creacion:
-        respaldos = respaldos.filter(fecha_creacion__date=fecha_creacion)
-    if tamano:
-        respaldos = respaldos.filter(tamano__icontains=tamano)
-
-    return render(request, 'gestionar_respaldos.html', {'respaldos': respaldos})

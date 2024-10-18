@@ -1,0 +1,232 @@
+/* Estilos generales */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    color: #000000;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Espaciado adicional para diferenciar módulos */
+.container > * {
+    margin-bottom: 30px;
+}
+
+/* Títulos */
+h2 {
+    font-size: 28px;
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Mejorando la organización del espacio en el formulario */
+.form-control, .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    margin-bottom: 15px; /* Separación entre campos */
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.btn {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Botón flotante para añadir productos */
+.btn-primary {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+.btn-success {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+.btn-success:hover {
+    background-color: #27ae60;
+    border-color: #27ae60;
+}
+
+.btn-outline-success, .btn-outline-danger, .btn-outline-primary {
+    border-width: 2px;
+}
+
+.btn-secondary {
+    margin-left: 10px;
+}
+
+/* Efecto hover y animaciones */
+a:hover, button:hover {
+    opacity: 0.8;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 20px; /* Espaciado entre tarjetas */
+}
+
+.card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background-color: #f1f3f5;
+    border-bottom: none;
+    border-radius: 15px 15px 0 0;
+    padding: 15px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Tabla */
+.table {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px; /* Espaciado adicional */
+}
+
+.table thead th {
+    background-color: #f1f3f5;
+    color: #2c3e50;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-bottom: none;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+.table th, .table td {
+    border-top: none;
+    border-bottom: 1px solid #e9ecef;
+    padding: 15px;
+    vertical-align: middle;
+}
+
+/* Badges */
+.badge {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Efecto fade-in para filas de tabla */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.table tbody tr {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Estilos para los botones de acción en la tabla */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* Ajuste del ancho de la columna de acciones */
+.table-productos th:last-child,
+.table-productos td:last-child {
+    width: 150px;
+}
+
+/* Estilos para exportar */
+.btn-outline-success, .btn-outline-danger {
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-success:hover {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-outline-danger:hover {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .btn, .form-control, .form-select {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .table thead {
+        display: none;
+    }
+
+    .table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    .table tbody tr td {
+        display: block;
+        text-align: right;
+        font-size: 14px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .table tbody tr td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+    }
+
+    .table tbody tr td:last-child {
+        border-bottom: none;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .btn-sm {
+        width: 100%;
+    }
+}

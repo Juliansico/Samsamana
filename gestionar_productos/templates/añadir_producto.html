@@ -4,7 +4,7 @@
 {% block title %}Añadir Producto{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/añadir.css' %}">
+    <link rel="stylesheet" href="{% static 'css/añadir_productos.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
         {% csrf_token %}
         <div class="row">
             {% for field in form %}
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 mb-3 col-12"> <!-- Asegurar que en pantallas pequeñas las columnas se expandan -->
                     <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                     {{ field }}
                     {% if field.errors %}
@@ -26,9 +26,9 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="d-flex justify-content-between">
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <a href="{% url 'gestionar_productos' %}" class="btn btn-secondary">Cancelar</a>
+        <div class="d-flex justify-content-between flex-wrap">
+            <button type="submit" class="btn btn-primary" title="Guardar producto" data-bs-toggle="tooltip" data-bs-placement="top">Guardar</button>
+            <a href="{% url 'gestionar_productos' %}" class="btn btn-secondary" title="Cancelar y volver a la lista de productos" data-bs-toggle="tooltip" data-bs-placement="top">Cancelar</a>
         </div>
     </form>
 </div>
@@ -46,6 +46,9 @@
             numeralPositiveOnly: true,
             numeralDecimalScale: 2
         });
+
+        // Inicializa los tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 </script>
 {% endblock %}

@@ -1,45 +1,91 @@
 {% extends "base.html" %}
 
-{% block titulo %} Lista de Compras {% endblock %}
+{% block titulo %} Lista de Ventas {% endblock %}
 
-{% block content %} 
-<div class="card">
-    <div class="card-header">
-        <a href="{% url 'crear_compra' %}" class="btn btn-success">Crear nueva Compra</a>
+{% block content %}
+<div class="container my-5">
+    <div class="text-center">
+        <h1 class="font-weight-bold">Gestionar Compras</h1>
     </div>
-    <div class="card-body">
-        <h4 class="card-title">Compras</h4>
-        <div class="table-responsive">
-            <table class="table table-primary">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Usuario</th>
-                        <th>Fecha</th>
-                        <th>Valor Total</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for compra in compras %}
-                    <tr>
-                        <td>{{ compra.id_compra }}</td>
-                        <td>{{ compra.usuario.username }}</td>
-                        <td>{{ compra.fecha }}</td>
-                        <td>{{ compra.total_compra }}</td>
-                        <td>
-                            <a href="{% url 'detalle_compra' id=compra.id %}" class="btn btn-info">Ver</a>
-                            <a href="{% url 'editar_compra' id=compra.id %}" class="btn btn-warning">Editar</a>
-                            <a href="{% url 'eliminar_compra' id=compra.id %}" class="btn btn-danger">Eliminar</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                <a href="{% url 'reporte_compras_excel' %}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">Exportar a Excel</a>
-                <a href="{% url 'reporte_compras_pdf' %}" class="btn btn-primary" style="background-color: #f44336; border-color: #f44336;">Exportar a PDF</a>
-            </table>
+<div class="container my-5">
+    <div class="card">
+        <div class="card-header">
+            <a href="{% url 'crear_compra' %}" class="btn btn-success">Crear nueva compra</a>
+        </div>
+        <div class="card-body">
+            <h4 class="card-title">Compras</h4>
+            <div class="table-responsive">
+                <table id="tabla-compras" class="table table-striped table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Fecha</th>
+                            <th>Valor Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for compra in compras %}
+                        <tr>
+                            <td>{{ compra.id }}</td>
+                            <td>{{ compra.usuario.username }}</td>
+                            <td>{{ compra.fecha }}</td>
+                            <td>{{ compra.total_compra }}</td>
+                            <td>
+                                <a href="{% url 'detalle_compra' id=compra.id %}" class="btn btn-info">Ver</a>
+                                <a href="{% url 'eliminar_compra' id=compra.id %}" class="btn btn-danger">Eliminar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'reporte_compras_excel' %}" class="btn btn-success">Exportar a Excel</a>
+                    <a href="{% url 'reporte_compras_pdf' %}" class="btn btn-danger">Exportar a PDF</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
+{% block extra_js %}
+{{ block.super }}
+<script>
+    $(document).ready(function() {
+        // Verifica si la tabla ya está inicializada
+        if ($.fn.dataTable.isDataTable('#tabla-compras')) {
+            $('#tabla-compras').DataTable().destroy(); // Destruye la instancia existente
+        }
+
+        // Inicializa la tabla nuevamente
+        $('#tabla-compras').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "responsive": true,
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sSearch": "Buscar:",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

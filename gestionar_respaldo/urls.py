@@ -11,7 +11,7 @@ urlpatterns = [
     path('restaurar_respaldo/', RestaurarRespaldoView.as_view(), name='restaurar_respaldo'),
     path('descargar_respaldo/<str:respaldo_id>/', descargar_respaldo, name='descargar_respaldo'),
     path('eliminar_respaldo/', EliminarRespaldoView.as_view(), name='eliminar_respaldo'),
-    path('filtrar_respaldos/', views.filtrar_respaldos, name='filtrar_respaldos'),
+   
     
     
     

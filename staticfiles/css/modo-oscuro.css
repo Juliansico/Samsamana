@@ -1,0 +1,17 @@
+body.dark-mode {
+    background-color: black; /* Color de fondo para el modo oscuro */
+    color: white; /* Color del texto para el modo oscuro */
+}
+
+body.dark-mode .theme-button, 
+body.dark-mode .form-control, 
+body.dark-mode select, 
+body.dark-mode .table, 
+body.dark-mode #nav-header, 
+body.dark-mode #nav-footer, 
+body.dark-mode #nav-content,
+body.dark-mode #nav-bar,
+body.dark-mode a{
+    background-color: #444; /* Fondo del botón en modo oscuro */
+    color: white; /* Texto del botón en modo oscuro */
+}

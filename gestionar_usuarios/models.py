@@ -14,6 +14,14 @@ class Usuario(AbstractUser):
     telefono = models.CharField(max_length=10)
     email = models.EmailField(max_length=254, unique=True)
     estado = models.BooleanField(default=True)
+    estado = models.BooleanField(default=True)
+
+    def is_active_user(self):
+        return self.is_active and self.estado
+
+    @property
+    def is_active(self):
+        return self.estado
 
     groups = models.ManyToManyField(
         'auth.Group',

@@ -105,9 +105,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'inventario',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
-        'PORT': '3307'
+        'PORT': '3308'
     }
 }
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

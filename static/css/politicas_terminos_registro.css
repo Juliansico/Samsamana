@@ -1,0 +1,15 @@
+.terminos-link {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 15px;
+}
+
+.terminos-link a {
+    color: #ffffff; /* Cambia este color según tu diseño */
+    text-decoration: none;
+}
+
+.terminos-link a:hover {
+    text-decoration: underline;
+}

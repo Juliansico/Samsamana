@@ -1,0 +1,21 @@
+body {
+    background-image: url("../img/Reestablecer_contrasena.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.swal2-confirm {
+    background-color: black !important;
+    color: white !important;
+}
+
+.swal2-error {
+    background-color: rgb(255, 255, 255) !important;
+    color: rgb(255, 0, 0) !important;
+}
+
+.swal2-title {
+    color: black;
+    font-weight: bold;
+}

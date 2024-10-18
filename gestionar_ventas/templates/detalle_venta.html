@@ -1,15 +1,30 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block titulo %} Detalle de la Venta {% endblock %}
-
+{% block extra_css %}
+     <link rel="stylesheet" href="{% static 'css/detalle_venta.css' %}?v1.1">
+{% endblock %}
 {% block content %} 
 <div class="card">
-    <div class="card-header">Detalle de la Venta #{{ venta.id_venta }}</div>
+    <div class="card-header">
+        <h4 class="card-title mb-0">Detalle de la Venta #{{ venta.id_venta }}</h4>
+    </div>
     <div class="card-body">
-        <h4 class="card-title">Información de la Venta</h4>
-        <p><strong>Usuario:</strong> {{ venta.usuario.username }}</p>
-        <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
-        <p><strong>Valor Total:</strong> {{ venta.valor_total }}</p>
+        <div class="export-buttons text-left mb-4">
+            <a href="{% url 'detalle_venta' venta.id %}?format=pdf" class="btn btn-export btn-primary" title="Exportar a PDF" data-bs-toggle="tooltip" data-bs-placement="top">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+            <a href="{% url 'detalle_venta' venta.id %}?format=excel" class="btn btn-export btn-success" title="Exportar a Excel" data-bs-toggle="tooltip" data-bs-placement="top">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+        </div>
+        
+        <div class="venta-info">
+            <p><strong>Usuario:</strong> {{ venta.usuario.username }}</p>
+            <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
+            <p><strong>Valor Total:</strong> {{ venta.valor_total }}</p>
+        </div>
         
         <h5>Detalles de la Venta</h5>
         <table class="table">
@@ -32,7 +47,9 @@
                 {% endfor %}
             </tbody>
         </table>
-        <a href="{% url 'gestionar_ventas' %}" class="btn btn-primary">Volver a la lista</a>
+        <div class="text-center mt-4">
+            <a href="{% url 'gestionar_ventas' %}" class="btn btn-primary">Volver a la lista</a>
+        </div>
     </div>
 </div>
 {% endblock %}

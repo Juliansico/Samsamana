@@ -1,0 +1,67 @@
+/* General styles for the form */
+.container {
+    background-color: #f8f9fa;
+}
+
+.card {
+    border-radius: 8px;
+}
+
+h2 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    color: #343a40;
+}
+
+.form-label {
+    font-weight: bold;
+    color: #495057;
+}
+
+.form-control, .form-control-file {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.form-control-file {
+    border: 1px dashed #ced4da;
+    padding: 8px;
+    background-color: #fff;
+}
+
+button[type="submit"], .btn-secondary {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.alert {
+    border-radius: 8px;
+}

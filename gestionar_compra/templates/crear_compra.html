@@ -1,139 +1,178 @@
 {% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/crear_venta.css' %}?v={% now 'U' %}">
+{% endblock %}
 
 {% block titulo %}Crear Compra{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header">Crear una Compra</div>
-    <div class="card-body">
-        <form method="post" id="compra-form">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <h3>Detalles de la Compra</h3>
-            {{ formset.management_form }}
-            <input type="hidden" name="detalles-TOTAL_FORMS" id="id_form-TOTAL_FORMS" value="{{ formset.total_form_count }}">
-            <input type="hidden" name="detalles-INITIAL_FORMS" id="id_form-INITIAL_FORMS" value="{{ formset.initial_form_count }}">
-            <input type="hidden" name="detalles-MIN_NUM_FORMS" id="id_form-MIN_NUM_FORMS" value="{{ formset.min_num_forms }}">
-            <input type="hidden" name="detalles-MAX_NUM_FORMS" id="id_form-MAX_NUM_FORMS" value="{{ formset.max_num_forms }}">
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Crear una Compra</h2>
+        </div>
+        <div class="card-body">
+            <div id="alert-container" style="display: none;"></div> <!-- Contenedor para alertas -->
+            <form method="post" id="compra-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in field.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
 
-            <div id="formset-container">
-                {% for form in formset %}
-                    <div class="formset-form">
-                        {{ form.as_p }}
-                        <button type="button" class="btn btn-danger remove-form">Eliminar ítem</button>
-                    </div>
-                {% endfor %}
-            </div>
-            <button type="button" class="btn btn-success" id="add-form">Agregar otro ítem</button>
-            <div id="subtotal">Subtotal: $<span id="subtotal-value">0.00</span></div>
-            <input type="submit" value="Crear Compra" class="btn btn-primary">
-        </form>
+                <h3>Detalles de la Compra</h3>
+                {{ formset.management_form }}
+                <input type="hidden" name="detalles-TOTAL_FORMS" id="id_form-TOTAL_FORMS" value="{{ formset.total_form_count }}">
+                <input type="hidden" name="detalles-INITIAL_FORMS" id="id_form-INITIAL_FORMS" value="{{ formset.initial_form_count }}">
+                <input type="hidden" name="detalles-MIN_NUM_FORMS" id="id_form-MIN_NUM_FORMS" value="{{ formset.min_num_forms }}">
+                <input type="hidden" name="detalles-MAX_NUM_FORMS" id="id_form-MAX_NUM_FORMS" value="{{ formset.max_num_forms }}">
+
+                <div id="formset-container">
+                    {% for form in formset %}
+                        <div class="formset-form">
+                            {% for field in form %}
+                                <div class="form-group">
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in field.errors %}
+                                                <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                            <div class="form-group">
+                                <label for="id_detalles-{{ forloop.counter0 }}-proveedor">Proveedor</label>
+                                <input type="text" name="detalles-{{ forloop.counter0 }}-proveedor" id="id_detalles-{{ forloop.counter0 }}-proveedor" class="form-control" readonly>
+                            </div>
+                            <button type="button" class="btn btn-danger remove-form" title="Eliminar">Eliminar producto</button>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <button type="button" class="btn btn-success" id="add-form" title="Agregar">Agregar otro producto</button>
+                <div id="subtotal">Subtotal: $<span id="subtotal-value">0.00</span></div>
+                <input type="submit" value="Crear Compra" class="btn btn-primary">
+            </form>
+            <button class="btn btn-secondary" onclick="window.location.href='{% url 'gestionar_compras' %}'">Volver Atrás</button>
+        </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const container = document.querySelector('#formset-container');
-    const addButton = document.querySelector('#add-form');
-    const totalForms = document.getElementById('id_form-TOTAL_FORMS');  // Campo oculto de total de formularios
-    let formCount = parseInt(totalForms.value, 10); // Inicialmente el número de formularios es lo que dice TOTAL_FORMS
-
-    function updateSubtotal() {
-        let subtotal = 0;
-        container.querySelectorAll('.formset-form').forEach(form => {
-            const cantidad = parseFloat(form.querySelector('[name$="-cantidad"]').value) || 0;
-            const precio = parseFloat(form.querySelector('[name$="-precio"]').value) || 0;
-            subtotal += cantidad * precio;
-        });
-        document.getElementById('subtotal-value').textContent = subtotal.toFixed(2);
-    }
-
-    function setupFormEvents(form) {
-        const productoSelect = form.querySelector('[name$="-producto"]');
-        const cantidadInput = form.querySelector('[name$="-cantidad"]');
-        const precioInput = form.querySelector('[name$="-precio"]');
-        const proveedorInput = form.querySelector('[name$="-proveedor"]'); // Campo proveedor
-
-        productoSelect.addEventListener('change', function() {
-            const productoId = this.value;
-            if (productoId) {
-                $.ajax({
-                    url: '/api/producto/' + productoId + '/precio/',
-                    type: 'GET',
-                    success: function(data) {
-                        if (data.precio) {
-                            precioInput.value = data.precio;
-                            updateSubtotal();
-                        }
-                    }
-                });
-
-                // Obtener proveedor
-                fetch(`/obtener_proveedor/${productoId}/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        proveedorInput.value = data.proveedor || '';
-                    })
-                    .catch(error => console.error('Error:', error));
-            } else {
-                precioInput.value = '0.00';
-                proveedorInput.value = '';
-                updateSubtotal();
-            }
-        });
-
-        cantidadInput.addEventListener('input', updateSubtotal);
-    }
-
-    addButton.addEventListener('click', function() {
-        const newForm = document.createElement('div');
-        newForm.classList.add('formset-form');
-        
-        // Clonamos el HTML del primer formulario
-        newForm.innerHTML = container.children[0].innerHTML.replace(/detalles-\d+/g, `detalles-${formCount}`);
-        
-        newForm.querySelectorAll('input, select').forEach(input => {
-            input.name = input.name.replace(/detalles-\d+/g, `detalles-${formCount}`);
-            input.id = input.id.replace(/detalles-\d+/g, `detalles-${formCount}`);
-            input.value = ''; // Limpiar el valor
-        });
-
-        container.appendChild(newForm); // Añadir el nuevo formulario al contenedor
-        setupFormEvents(newForm); // Configurar eventos para el nuevo formulario
-        formCount++; // Incrementar el contador de formularios
-        totalForms.value = formCount; // Actualizar el total de formularios en el campo oculto
-        updateSubtotal(); // Actualizar el subtotal
-    });
-
-    container.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-form')) {
-            if (container.children.length > 1) {
-                e.target.closest('.formset-form').remove();
-                updateFormIndexes(); // Recalcular los índices de los formularios
-                updateSubtotal(); // Actualizar el subtotal
-            } else {
-                alert('Debe haber al menos un ítem en la compra.');
-            }
-        }
-    });
-
-    function updateFormIndexes() {
-        const forms = container.querySelectorAll('.formset-form');
-        forms.forEach((form, index) => {
-            form.querySelectorAll('input, select').forEach(input => {
-                input.name = input.name.replace(/detalles-\d+/g, `detalles-${index}`);
-                input.id = input.id.replace(/detalles-\d+/g, `detalles-${index}`);
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector('#formset-container');
+        const addButton = document.querySelector('#add-form');
+        const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+        let formCount = parseInt(totalForms.value, 10);
+    
+        function updateSubtotal() {
+            let subtotal = 0;
+            container.querySelectorAll('.formset-form').forEach(form => {
+                const precio = parseFloat(form.querySelector('[name$="-precio"]').value) || 0;
+                subtotal += precio;
             });
+            document.getElementById('subtotal-value').textContent = subtotal.toFixed(2);
+        }
+    
+        function setupFormEvents(form) {
+            const productoSelect = form.querySelector('[name$="-producto"]');
+            const cantidadInput = form.querySelector('[name$="-cantidad"]');
+            const precioInput = form.querySelector('[name$="-precio"]');
+            const proveedorInput = form.querySelector('[name$="-proveedor"]');
+    
+            productoSelect.setAttribute('required', 'required');  // Validación del campo obligatorio
+            cantidadInput.setAttribute('required', 'required');
+            cantidadInput.setAttribute('min', '1');  // Validación para asegurar que sea mayor que 0
+            precioInput.setAttribute('required', 'required');
+            precioInput.setAttribute('min', '0');  // Validación para precio positivo
+    
+            productoSelect.addEventListener('change', function() {
+                const productoId = this.value;
+                if (productoId) {
+                    $.ajax({
+                        url: '/api/producto/' + productoId + '/precio/',
+                        type: 'GET',
+                        success: function(data) {
+                            if (data.proveedor) {
+                                proveedorInput.value = data.proveedor; // Asignar el proveedor al input
+                            } else {
+                                proveedorInput.value = ''; // Limpiar si no hay proveedor
+                            }
+                            updateSubtotal(); // Actualizar el subtotal
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error al obtener el proveedor:', error);
+                        }
+                    });
+                } else {
+                    proveedorInput.value = ''; // Limpiar si no se selecciona ningún producto
+                    updateSubtotal(); // Actualizar el subtotal
+                }
+            });
+    
+            cantidadInput.addEventListener('input', updateSubtotal);
+            precioInput.addEventListener('input', updateSubtotal);
+        }
+    
+        addButton.addEventListener('click', function() {
+            const newForm = document.createElement('div');
+            newForm.classList.add('formset-form');
+            newForm.innerHTML = container.children[0].innerHTML.replace(/detalles-\d+/g, 'detalles-' + formCount);
+            newForm.querySelectorAll('input, select').forEach(input => {
+                input.name = input.name.replace(/detalles-\d+/g, 'detalles-' + formCount);
+                input.id = input.id.replace(/detalles-\d+/g, 'detalles-' + formCount);
+                input.value = '';  // Limpiar valores por defecto
+            });
+    
+            container.appendChild(newForm);
+            setupFormEvents(newForm);
+            formCount++;
+            totalForms.value = formCount;
+            updateSubtotal();
         });
-        formCount = forms.length; // Actualizar el contador con la cantidad real de formularios
-        totalForms.value = formCount; // Actualizar el número total de formularios en el formset
-    }
-
-    // Configurar eventos para los formularios iniciales
-    container.querySelectorAll('.formset-form').forEach(setupFormEvents);
-
-    updateSubtotal(); // Inicializar el subtotal
-});
+    
+        container.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-form')) {
+                if (container.children.length > 1) {
+                    e.target.closest('.formset-form').remove();
+                    updateFormIndexes();
+                    updateSubtotal();
+                } else {
+                    alert('Debe haber al menos un producto en la compra.');
+                }
+            }
+        });
+    
+        function updateFormIndexes() {
+            const forms = container.querySelectorAll('.formset-form');
+            forms.forEach((form, index) => {
+                form.querySelectorAll('input, select').forEach(input => {
+                    input.name = input.name.replace(/detalles-\d+/g, 'detalles-' + index);
+                    input.id = input.id.replace(/detalles-\d+/g, 'detalles-' + index);
+                });
+            });
+            formCount = forms.length;
+            totalForms.value = formCount;
+        }
+    
+        container.querySelectorAll('.formset-form').forEach(setupFormEvents);
+        updateSubtotal();
+    });
 </script>
 {% endblock %}

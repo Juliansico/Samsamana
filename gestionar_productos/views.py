@@ -26,7 +26,23 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 from io import BytesIO
+from openpyxl.styles import Border, Side
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.styles import ParagraphStyle
 # Create your views here.
+
+
+def get_breadcrumbs(request):
+    path = request.path.split('/')[1:]
+    breadcrumbs = [{'title': 'Inicio', 'url': '/dashboard/'}]  # El inicio te lleva al dashboard
+    url = ''
+    for item in path:
+        url += f'/{item}'
+        breadcrumbs.append({'title': item.capitalize(), 'url': url})
+    return breadcrumbs
 
 @never_cache
 def dashboard(request):
@@ -35,7 +51,8 @@ def dashboard(request):
 @login_required
 def gestionar_productos(request):
     productos = Producto.objects.all()
-    return render(request, 'gestionar_productos.html', {'productos': productos})
+    breadcrumbs = get_breadcrumbs(request)
+    return render(request, 'gestionar_productos.html', {'productos': productos, 'breadcrumbs': breadcrumbs})
 
 @never_cache
 @login_required
@@ -48,7 +65,8 @@ def añadir_producto(request):
             return redirect('gestionar_productos')
     else:
         form = ProductoForm()
-    return render(request, 'añadir_producto.html', {'form': form})
+    breadcrumbs = get_breadcrumbs(request)
+    return render(request, 'añadir_producto.html', {'form': form, 'breadcrumbs': breadcrumbs})
 
 
 @never_cache
@@ -63,7 +81,8 @@ def editar_producto(request, producto_id):
             return redirect('gestionar_productos')
     else:
         form = ProductoForm(instance=producto)
-    return render(request, 'editar_producto.html', {'form': form, 'producto': producto})
+    breadcrumbs = get_breadcrumbs(request)
+    return render(request, 'editar_producto.html', {'form': form, 'producto': producto, 'breadcrumbs': breadcrumbs})
 
 @never_cache
 @login_required
@@ -105,6 +124,7 @@ def filtrar_productos(request):
         'marcas': Marca.objects.all(),
         'presentaciones': Presentacion.objects.all(),
         'proveedor': Proveedor.objects.all(),
+        'breadcrumbs': get_breadcrumbs(request)
     }
 
     return render(request, 'gestionar_productos.html', context)
@@ -117,44 +137,32 @@ def activar_inactivar_producto(request, producto_id):
     producto.save()
     estado = "activado" if producto.estado else "inactivado"
     messages.success(request, f'Producto {estado} con éxito.')
+    breadcrumbs = get_breadcrumbs(request)
     return redirect('gestionar_productos')
 
 
 def reporte_productos_pdf(request):
     buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=letter)
+    doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
     width, height = letter
-    margin = 50
-    table_width = width - 2 * margin
-    row_height = 20
-    y_position = height - margin
 
-    # Cargar la imagen de marca de agua
-    watermark_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
-    if os.path.exists(watermark_path):
-        try:
-            p.saveState()
-            p.setFillAlpha(0.5)  # Ajusta la transparencia (0.1 = 10% opaco)
-            img = ImageReader(watermark_path)
-            iw, ih = img.getSize()
-            aspect = ih / float(iw)
-            p.drawImage(img, x=0, y=0, width=width, height=height*aspect, mask='auto', preserveAspectRatio=True)
-            p.restoreState()
-        except Exception as e:
-            print("Error al agregar la marca de agua:", e)
+    # Estilos
+    styles = getSampleStyleSheet()
+    title_style = styles['Title']
+    subtitle_style = styles['Heading2']
+    normal_style = styles['Normal']
 
-    # Añadir títulos
-    p.setFont("Helvetica-Bold", 24)
-    p.drawString(margin, y_position, "SAMSAMANA")
-    y_position -= 30
-    p.setFont("Helvetica", 18)
-    p.drawString(margin, y_position, "Reporte de Productos")
-    y_position -= 50
+    # Crear contenido
+    elements = []
 
+    # Título y subtítulo
+    elements.append(Paragraph("SAMSAMANA", title_style))
+    elements.append(Paragraph("Reporte de Productos", subtitle_style))
 
-    column_widths = [30, 150, 80, 60, 60, 80, 60, 60]
-    headers = ["ID", "Nombre", "Marca", "Presentación", "Categoría", "Precio", "Unidad de medida", "Estado"]
-    data = [headers]
+    # Datos de la tabla
+    data = [
+        ["ID", "Nombre", "Marca", "Presentación", "Categoría", "Precio", "Unidad de medida", "Estado", "Proveedor"]
+    ]
 
     productos = Producto.objects.all()
     for producto in productos:
@@ -166,74 +174,106 @@ def reporte_productos_pdf(request):
             producto.categoria.nombre,
             str(producto.precio),
             producto.unidad_de_medida,
-            'Activo' if producto.estado else 'Inactivo'
+            'Activo' if producto.estado else 'Inactivo',
+            producto.proveedor.nombre if producto.proveedor else 'Sin proveedor'
         ])
 
-    table = Table(data, colWidths=column_widths)
-
-    style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), '#25b6e6'),
-        ('TEXTCOLOR', (0, 0), (-1, 0), (0, 0, 0)),
+    # Estilos de la tabla
+    table_style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#003366')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('GRID', (0, 0), (-1, -1), 1, (0, 0, 0)),
-        ('FONT', (0, 0), (-1, -1), 'Helvetica', 10),
-        ('BACKGROUND', (0, 1), (-1, -1), '#f2f2f2'),
-        ('ALIGN', (0, 1), (-1, -1), 'CENTER')
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#f2f2f2')),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
     ])
-    table.setStyle(style)
-    
-    # Ajustar la posición de la tabla
-    table_width = sum(column_widths)
-    table_x = (width - table_width - 2 * margin) / 2 + margin
-    table_y = y_position - len(data) * row_height
-    table.wrapOn(p, table_width, height - 2 * margin)
-    table.drawOn(p, table_x, table_y)
 
-    p.showPage()
-    p.save()
+    # Crear la tabla con anchos de columna ajustados
+    col_widths = [0.5*inch, 1.5*inch, 1*inch, 1*inch, 1*inch, 0.8*inch, 0.8*inch, 0.8*inch, 1.5*inch]
+    table = Table(data, colWidths=col_widths, repeatRows=1)
+    table.setStyle(table_style)
+
+    # Función para dividir el texto en dos líneas si es necesario
+    def split_header(text, width, font="Helvetica-Bold", size=10):
+        from reportlab.pdfbase.pdfmetrics import stringWidth
+        if stringWidth(text, font, size) > width:
+            words = text.split()
+            result = []
+            line = ""
+            for word in words:
+                if stringWidth(line + word, font, size) <= width:
+                    line += word + " "
+                else:
+                    result.append(line.strip())
+                    line = word + " "
+            result.append(line.strip())
+            return "\n".join(result)
+        return text
+
+    # Aplicar división de texto a los encabezados
+    for i, header in enumerate(data[0]):
+        p = Paragraph(split_header(header, col_widths[i] - 6), 
+                ParagraphStyle('Header', parent=styles['Normal'], alignment=1, 
+                                textColor=colors.white, fontName='Helvetica-Bold', fontSize=10))
+        table._cellvalues[0][i] = p
+
+    elements.append(table)
+
+    # Generar PDF con marca de agua
+    doc.build(elements)
+
+    # Preparar respuesta
     buffer.seek(0)
-
     response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="Reporte_productos.pdf"'
+    
     return response
 
+
+
 def reporte_productos_excel(request):
+    # Crear buffer para el archivo Excel
     buffer = BytesIO()
     wb = Workbook()
     ws = wb.active
     ws.title = "Reporte de Productos"
 
-    # Definir estilos
+    # Estilos de Excel
     header_font = Font(bold=True, color="FFFFFF")
-    header_fill = PatternFill(start_color="25b6e6", end_color="25b6e6", fill_type="solid")
+    header_fill = PatternFill(start_color="0066cc", end_color="0066cc", fill_type="solid")
     alignment_center = Alignment(horizontal="center", vertical="center")
-    
-    # Añadir logo (más pequeño)
+
+    # Añadir logo en la primera fila
     logo_path = os.path.join(settings.STATIC_ROOT, 'img', 'Samsamanalogo1PNG.png')
     if os.path.exists(logo_path):
         img = Image(logo_path)
-        img.width = 80  # Hacer el logo más pequeño (ajustar según necesidad)
-        img.height = 40
-        ws.add_image(img, 'A1')
+        img.width = 170  # Tamaño ajustado del logo
+        img.height = 80
+        ws.add_image(img, 'A1')  # Posicionar el logo en la celda A1
 
-    # Añadir título
-    ws.merge_cells('B1:H1')
-    title_cell = ws['B1']
+    # Título centrado en la fila 3
+    ws.merge_cells('A3:I3')  # Combina celdas para el título en función del ancho de la tabla
+    title_cell = ws['A3']
     title_cell.value = "TABLA PRODUCTOS - BALNEARIO SAMSAMANA"
-    title_cell.font = Font(bold=True, size=16)
-    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+    title_cell.font = Font(bold=True, size=14)
+    title_cell.alignment = alignment_center
 
-    # Añadir encabezados
-    headers = ["ID", "Nombre", "Marca", "Presentación", "Categoría", "Precio", "Unidad de medida", "Estado"]
-    for col_num, header in enumerate(headers, 1):
-        cell = ws.cell(row=3, column=col_num, value=header)
+    # Encabezados de la tabla en la fila 5
+    headers = ["ID", "Nombre", "Marca", "Presentación", "Categoría", "Precio", "Unidad de medida", "Proveedor", "Estado"]
+    for col_num, header in enumerate(headers, 1):  # Columnas desde A hasta I
+        cell = ws.cell(row=5, column=col_num, value=header)  # Fila 5 para encabezados
         cell.font = header_font
         cell.fill = header_fill
         cell.alignment = alignment_center
 
-    # Añadir datos de productos
+    # Obtener datos de productos del modelo y agregar a la tabla
     productos = Producto.objects.all()
-    for row_num, producto in enumerate(productos, 4):
+    for row_num, producto in enumerate(productos, start=6):  # Los datos empiezan desde la fila 6
         ws.cell(row=row_num, column=1, value=producto.id).alignment = alignment_center
         ws.cell(row=row_num, column=2, value=producto.nombre).alignment = alignment_center
         ws.cell(row=row_num, column=3, value=producto.marca.nombre).alignment = alignment_center
@@ -241,19 +281,34 @@ def reporte_productos_excel(request):
         ws.cell(row=row_num, column=5, value=producto.categoria.nombre).alignment = alignment_center
         ws.cell(row=row_num, column=6, value=producto.precio).alignment = alignment_center
         ws.cell(row=row_num, column=7, value=producto.unidad_de_medida).alignment = alignment_center
-        ws.cell(row=row_num, column=8, value='Activo' if producto.estado else 'Inactivo').alignment = alignment_center
+        ws.cell(row=row_num, column=8, value=producto.proveedor.nombre).alignment = alignment_center  # Agregar el proveedor
+        
+        estado = 'Activo' if producto.estado else 'Inactivo'
+        estado_font = Font(color="00FF00") if producto.estado else Font(color="FF0000")  # Verde para Activo, Rojo para Inactivo
+        estado_cell = ws.cell(row=row_num, column=9, value=estado)
+        estado_cell.alignment = alignment_center
+        estado_cell.font = estado_font
 
-    # Ajustar el ancho de las columnas para que se vean centradas
-    column_widths = [5, 20, 20, 20, 20, 15, 30, 10]  # Ajusta los anchos según sea necesario
-    for col_num, width in enumerate(column_widths, 1):
+    # Ajustar anchos de columna
+    column_widths = [20, 20, 20, 20, 20, 15, 20, 20, 10]  # Anchos ajustados según los datos
+    for col_num, width in enumerate(column_widths, start=1):  # Ajustar columnas desde A a I
         column_letter = get_column_letter(col_num)
         ws.column_dimensions[column_letter].width = width
 
-    # Guardar el archivo en el buffer
+    # Agregar bordes a la tabla
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    for row in ws[f'A5:I{ws.max_row}']:  # Agregar bordes desde la fila 5 hasta la última fila con datos
+        for cell in row:
+            cell.border = thin_border
+
+    # Ajustar alturas de filas
+    ws.row_dimensions[1].height = 50  # Altura para la fila del logo
+    ws.row_dimensions[3].height = 30  # Altura para la fila del título
+    ws.row_dimensions[5].height = 20  # Altura para la fila de encabezados
+
+    # Guardar y devolver el archivo Excel
     wb.save(buffer)
     buffer.seek(0)
-
-    # Preparar la respuesta HTTP
     response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename="Reporte_productos_samsamana.xlsx"'
     return response

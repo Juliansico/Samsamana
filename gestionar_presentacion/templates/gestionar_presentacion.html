@@ -7,10 +7,10 @@
 
 <form method="get" action="{% url 'filtrar_presentaciones' %}">
     <div class="row mb-3">
-        <div class="col-md-3">
+        <div class="col-md-6">
             <input type="text" class="form-control" placeholder="Buscar por nombre..." name="buscar" value="{{ request.GET.buscar }}">
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
             <select id="estado" name="estado" class="form-control">
                 <option value="">Filtrar estado (Todos)</option>
                 <option value="activado" {% if request.GET.estado == "activado" %}selected{% endif %}>Activado</option>
@@ -23,7 +23,12 @@
     </div>
 </form>
 
-<table class="table">
+<div class="d-flex justify-content-between mt-4">
+    <a href="{% url 'reporte_presentaciones_excel' %}" class="btn btn-success">Exportar a Excel</a>
+    <a href="{% url 'reporte_presentaciones_pdf' %}" class="btn btn-danger">Exportar a PDF</a>
+</div>
+
+<table id="tabla-presentaciones" class="table table-striped table-bordered">
     <thead>
         <tr>
             <th>ID</th>
@@ -45,10 +50,52 @@
                 </a>
             </td>
         </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="text-center">No se encontraron presentaciones.</td>
+        </tr>
         {% endfor %}
     </tbody>
-    <a href="{% url 'reporte_presentaciones_excel' %}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">Exportar a Excel</a>
-    <a href="{% url 'reporte_presentaciones_pdf' %}" class="btn btn-primary" style="background-color: #f44336; border-color: #f44336;">Exportar a PDF</a>
-
 </table>
+
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    $(document).ready(function() {
+        // Destruye la tabla si ya existe
+        if ($.fn.DataTable.isDataTable('#tabla-presentaciones')) {
+            $('#tabla-presentaciones').DataTable().destroy();
+        }
+
+        // Inicializa la tabla
+        $('#tabla-presentaciones').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sSearch": "Buscar:",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            }
+        });
+        console.log("Tabla de Presentaciones inicializada");
+    });
+</script>
 {% endblock %}

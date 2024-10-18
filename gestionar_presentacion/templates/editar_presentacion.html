@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
+{% load static %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/editar_presentacion.css' %}">
+{% endblock %}
 {% block content %}
-<h1>Editar Presentación</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Actualizar Presentación</button>
-</form>
-<a href="{% url 'gestionar_presentacion' %}" class="btn btn-secondary">Volver</a>
+<div class="editar-presentacion-container">
+    <h1 class="titulo">Editar Presentación</h1>
+    <form method="post" class="editar-form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <div class="botones">
+            <button type="submit" class="btn btn-guardar">Actualizar Presentación</button>
+            <a href="{% url 'gestionar_presentacion' %}" class="btn btn-volver">Volver</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

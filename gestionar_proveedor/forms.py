@@ -8,26 +8,18 @@ class BaseModelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
-        
-        self.fields['estado'].widget.attrs.update({
-            'class': 'form-check-input',
-            'style': 'width: 20px; height: 20px;'
-        })
 
 class ProveedorForm(BaseModelForm):
     class Meta:
         model = Proveedor
-        fields = ['nombre', 'direccion', 'telefono', 'email', 'estado']
-        widgets = {
-            'estado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
+        fields = ['nombre', 'direccion', 'telefono', 'email']
         error_messages = {
             'nombre': {'required': 'Este campo es obligatorio.'},
             'direccion': {'required': 'Este campo es obligatorio.'},
             'telefono': {'required': 'Este campo es obligatorio.'},
             'email': {'required': 'Este campo es obligatorio.'},
         }
-        
+
     def clean_nombre(self):
         nombre = self.cleaned_data.get('nombre')
         if not nombre:
@@ -35,12 +27,6 @@ class ProveedorForm(BaseModelForm):
         if not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$', nombre):
             raise ValidationError("El nombre solo puede contener letras y espacios.")
         return nombre
-
-    def clean_direccion(self):
-        direccion = self.cleaned_data.get('direccion')
-        if not direccion:
-            raise ValidationError("Este campo es obligatorio.")
-        return direccion
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -50,10 +36,16 @@ class ProveedorForm(BaseModelForm):
             raise ValidationError("Por favor, ingrese un correo electrónico válido.")
         return email
 
-    def clean_telefono(self):
-        telefono = self.cleaned_data.get('telefono')
-        if not telefono:
-            raise ValidationError("Este campo es obligatorio.")
-        if not re.match(r'^\d{10}$', telefono):
-            raise ValidationError("El teléfono debe contener exactamente 10 dígitos.")
-        return telefono
+    def clean(self):
+        cleaned_data = super().clean()
+        nombre = cleaned_data.get('nombre')
+        email = cleaned_data.get('email')
+
+        # Verificación de duplicados
+        if Proveedor.objects.filter(nombre=nombre).exists() and not self.instance.pk:
+            raise ValidationError("Ya existe un proveedor con este nombre.")
+        
+        if Proveedor.objects.filter(email=email).exists() and not self.instance.pk:
+            raise ValidationError("Ya existe un proveedor con este correo electrónico.")
+
+        return cleaned_data
